@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>VI. Processes</title>
+<link href="stylesheet.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+<h1>VI. Processes</h1>
+<h2 id="execute-the-app-as-one-or-more-stateless-processes">Execute the app as one or more stateless processes</h2><p>The app is executed in the execution environment as one or more <em>processes</em>.</p><p>In the simplest case, the code is a stand-alone script, the execution environment is a developer's local laptop with an installed language runtime, and the process is launched via the command line (for example, <code>python my_script.py</code>). On the other end of the spectrum, a production deploy of a sophisticated app may use many process types, instantiated into zero or more running processes.</p><p><strong>Twelve-factor processes are stateless and share-nothing.</strong> Any data that needs to persist must be stored in a stateful backing service, typically a database.</p><p>The memory space or filesystem of the process can be used as a brief, single-transaction cache. For example, downloading a large file, operating on it, and storing the results of the operation in the database. The twelve-factor app never assumes that anything cached in memory or on disk will be available on a future request or job -- with many processes of each type running, chances are high that a future request will be served by a different process. Even when running only one process, a restart (triggered by code deploy, config change, or the execution environment relocating the process to a different physical location) will usually wipe out all local (e.g., memory and filesystem) state.</p><p>Asset packagers (such as Jammit or django-assetpackager) use the filesystem as a cache for compiled assets. A twelve-factor app prefers to do this compiling during the build stage, such as the Rails asset pipeline, rather than at runtime.</p><p>Some web systems rely on &quot;sticky sessions&quot; -- that is, caching user session data in memory of the app's process and expecting future requests from the same visitor to be routed to the same process. Sticky sessions are a violation of twelve-factor and should never be used or relied upon. Session state data is a good candidate for a datastore that offers time-expiration, such as Memcached or Redis.</p>
+</body>
+</html>

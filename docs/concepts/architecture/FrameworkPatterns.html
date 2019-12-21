@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# " lang="en">
+    <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Framework Patterns | Secret Weblog</title>
+
+    
+            <link href="../assets/css/all-nocdn.css" rel="stylesheet" type="text/css">
+
+    
+            <link rel="alternate" type="application/rss+xml" title="RSS" href="../rss.xml">
+
+      <link rel="canonical" href="http://blog.startifact.com/posts/framework-patterns.html">
+
+
+
+
+    
+        <!--[if lt IE 9]><script src="../assets/js/html5.js"></script><![endif]-->
+
+    
+
+
+    
+
+    <meta name="author" content="Martijn Faassen">
+        <link rel="prev" href="secret-weblog-highlights.html" title="Secret Weblog Highlights" type="text/html">
+    
+    <meta property="og:site_name" content="Secret Weblog">
+    <meta property="og:title" content="Framework Patterns">
+    <meta property="og:url" content="http://blog.startifact.com/posts/framework-patterns.html">
+    <meta property="og:description" content="A software framework is code that calls your (application) code. That's how we
+distinguish a framework from a library. Libraries have aspects of frameworks so
+there is a gray area.
+My friend Christian">
+    <meta property="og:type" content="article">
+    <meta property="article:published_time" content="2019-12-04T15:35:38+01:00">
+           <meta property="article:tag" content="frameworks">
+           <meta property="article:tag" content="morepath">
+           <meta property="article:tag" content="planetpython">
+           <meta property="article:tag" content="python">
+
+    
+
+    
+
+
+
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+<!-- This keeps the margins nice -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://blog.startifact.com/">
+
+                <span id="blog-title">Secret Weblog</span>
+            </a>
+        </div>
+<!-- /.navbar-header -->
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                
+                <li>
+<a href="../archive.html">Archive</a>
+                </li>
+<li>
+<a href="../categories/index.html">Tags</a>
+                </li>
+<li>
+<a href="../rss.xml">RSS</a>
+
+                
+            </li>
+</ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                
+                
+                
+            </ul>
+        </div>
+<!-- /.navbar-collapse -->
+    </div>
+<!-- /.container -->
+</nav>
+
+<!-- End of Menubar -->
+
+<div class="container" id="content">
+    <div class="body-content">
+        <!--Body content-->
+        <div class="row">
+            
+            
+<article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article">
+    
+    <header>
+        
+    <h1 class="p-name entry-title" itemprop="headline name"><a href="#" class="u-url">Framework Patterns</a></h1>
+
+        <div class="metadata">
+            <p class="byline author vcard"><span class="byline-name fn">Martijn Faassen</span></p>
+            <p class="dateline"><a href="#" rel="bookmark"><time class="published dt-published" datetime="2019-12-04T15:35:38+01:00" itemprop="datePublished" title="2019-12-04 15:35">2019-12-04 15:35</time></a></p>
+                <p class="commentline">
+        
+    <a href="framework-patterns.html#disqus_thread" data-disqus-identifier="cache/posts/framework-patterns.html">Comments</a>
+
+
+            
+
+        </p>
+</div>
+        
+
+    </header>
+
+    <div class="e-content entry-content" itemprop="articleBody text">
+    <div>
+<p>A software framework is code that calls your (application) code. That's how we
+distinguish a framework from a library. Libraries have aspects of frameworks so
+there is a gray area.</p>
+<p>My friend Christian Theune puts it like this: a framework is a text where you
+fill in the blanks. The framework defines the grammar, you bring some of the
+words. The words are the code you bring into it.</p>
+<p>If you as a developer use a framework, you need to tell it about your code.
+You need to tell the framework what to call, when. Let's call this
+<em>configuring</em> the framework.</p>
+<p>There are many ways to configure a framework. Each approach has its own
+trade-offs. I will describe some of these framework configuration patterns
+here, with brief examples and mention of some of the trade-offs. Many
+frameworks use more than a single pattern. I don't claim this list is
+exhaustive -- there are more patterns.</p>
+<p>The patterns I describe are generally language agnostic, though some depend on
+specific language features. Some of these patterns make more sense in object
+oriented languages. Some are easier to accomplish in one language compared to
+another.  Some languages have rich run-time introspection abilities, and that
+make certain patterns a lot easier to implement. A language with a powerful
+macro facility will make other patterns easier to implement.</p>
+<p>Where I give example code, I will use Python. I give some abstract code
+examples, and try to supply a few real-world examples as well. The examples
+show the framework from the perspective of the application developer.</p>
+<div class="section" id="pattern-callback-function">
+<h2>Pattern: Callback function</h2>
+<p>The framework lets you pass in a callback function to configure its behavior.</p>
+<div class="section" id="fictional-example">
+<h3>Fictional example</h3>
+<p>This is a <cite>Form</cite> class where you can pass in a function that implements what
+should happen when you save the form.</p>
+<pre class="code python literal-block">
+<span class="kn">from</span> <span class="nn">framework</span> <span class="kn">import</span> <span class="n">Form</span>
+
+<span class="k">def</span> <span class="nf">my_save</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="o">...</span> <span class="n">application</span> <span class="n">code</span> <span class="n">to</span> <span class="n">save</span> <span class="n">the</span> <span class="n">data</span> <span class="n">somewhere</span> <span class="o">...</span>
+
+<span class="n">my_form</span> <span class="o">=</span> <span class="n">Form</span><span class="p">(</span><span class="n">save</span><span class="o">=</span><span class="n">my_save</span><span class="p">)</span>
+</pre>
+</div>
+<div class="section" id="real-world-example-python-map">
+<h3>Real-world example: Python map</h3>
+<p>A real-world example: <cite>map</cite> is a (nano)framework that takes a (pure) function:</p>
+<pre class="code python literal-block">
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">]</span>
+</pre>
+<p>You can go very far with this approach. Functional languages do. If you glance
+at React in a certain way, it's configured with a whole bunch of callback
+functions called React components, along with more callback functions called
+event handlers.</p>
+</div>
+<div class="section" id="trade-offs">
+<h3>Trade-offs</h3>
+<p>I am a big fan of this approach as the trade-offs are favorable in many
+circumstances. In object-oriented languages this pattern is sometimes ignored
+because people feel they need something more complicated like pass in some
+fancy object or do inheritance, but I think callback functions should in fact
+be your first consideration.</p>
+<p>Functions are simple to understand and implement. The contract is about as
+simple as it can be for code. Anything you may need to implement your function
+is passed in as arguments by the framework, which limits how much knowledge you
+need to use the framework.</p>
+<p>Configuration of a callback function can be very dynamic in run-time -- you can
+dynamically assemble or create functions and pass them into the framework,
+based on some configuration stored in a database, for instance.</p>
+<p>Configuration with callback functions doesn't really stand out, which can be a
+disadvantage -- it's easier to see someone subclasses a base class or
+implements an interface, and language-integrated methods of configuration
+can stand out even more.</p>
+<p>Sometimes you want to configure multiple related functions at once, in which
+case an object that implements an interface can make more sense -- I describe
+that pattern below.</p>
+<p>It helps if your language has support for function closures. And of course your
+language needs to actually support first class functions that you can pass
+around -- Java for a long time did not.</p>
+</div>
+</div>
+<div class="section" id="pattern-subclassing">
+<h2>Pattern: Subclassing</h2>
+<p>The framework provides a base-class which you as the application developer can
+subclass. You implement one or more methods that the framework will call.</p>
+<div class="section" id="id1">
+<h3>Fictional example</h3>
+<pre class="code python literal-block">
+<span class="kn">from</span> <span class="nn">framework</span> <span class="kn">import</span> <span class="n">FormBase</span>
+
+<span class="k">class</span> <span class="nc">MyForm</span><span class="p">(</span><span class="n">FormBase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="o">...</span> <span class="n">application</span> <span class="n">code</span> <span class="n">save</span> <span class="n">the</span> <span class="n">data</span> <span class="n">somewhere</span> <span class="o">...</span>
+</pre>
+</div>
+<div class="section" id="real-world-example-django-rest-framework">
+<h3>Real-world example: Django REST Framework</h3>
+<p>Many frameworks offer base classes - Django offers them, and Django REST
+Framework even more.</p>
+<p>Here's an example from Django REST Framework:</p>
+<pre class="code python literal-block">
+<span class="k">class</span> <span class="nc">AccountViewSet</span><span class="p">(</span><span class="n">viewsets</span><span class="o">.</span><span class="n">ModelViewSet</span><span class="p">):</span>
+    <span class="sd">"""
+    A simple ViewSet for viewing and editing accounts.
+    """</span>
+    <span class="n">queryset</span> <span class="o">=</span> <span class="n">Account</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">AccountSerializer</span>
+    <span class="n">permission_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">IsAccountAdminOrReadOnly</span><span class="p">]</span>
+</pre>
+<p>A <cite>ModelViewSet</cite> does a lot: it implements a lot of URLs and request methods to
+interact with them. It integrates with Django's ORM so that you get a REST API
+that you can use to create and update database objects.</p>
+</div>
+<div class="section" id="subclassing-questions">
+<h3>Subclassing questions</h3>
+<p>When you subclass a class, this is what you might need to know:</p>
+<ul class="simple">
+<li>What base classes are there?</li>
+<li>What methods can you override?</li>
+<li>When you override a method, can you call other methods on <cite>self</cite> (<cite>this</cite>)
+or not? Is there is a particular order in which you are allowed to call these
+methods?</li>
+<li>Does the base class provide an implementation of this method, or is
+it really empty?</li>
+<li>If the base class provides an implementation already, you need to know
+whether it's intended to be supplemented, or overridden, or both.</li>
+<li>If it's intended to be supplemented, you need to make sure to call
+this method on the superclass in your implementation.</li>
+<li>If you can override a method entirely, you may need to know what methods to
+use to to play a part in the framework -- perhaps other methods that can be
+overridden.</li>
+<li>Does the base class inherit from other classes that also let you override
+methods? when you implement a method, can it interact with other methods on
+these other classes?</li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h3>Trade-offs</h3>
+<p>Many object-oriented languages support inheritance as a language feature. You
+can make the subclasser implement multiple related methods. It seems obvious to
+use inheritance as a way to let applications use and configure the framework.</p>
+<p>It's not surprising then that this design is very common for frameworks. But I
+try to avoid it in my own frameworks, and I often am frustrated when a
+framework forces me to subclass.</p>
+<p>The reason for this is that you as the application developer have to start
+worrying about many of the questions above. If you're lucky they are answered
+by documentation, though it can still take a bit of effort to understand it.
+But all too often you have to guess or read the code yourself.</p>
+<p>And then even with a well designed base class with plausible overridable
+methods, it can still be surprisingly hard for you to do what you actually
+<em>need</em> because the contract of the base class is just not right for your use
+case.</p>
+<p>Languages like Java and TypeScript offer the framework implementer a way to
+give you guidance (<cite>private/protected/public</cite>, <cite>final</cite>). The framework designer
+can put hard limits on which methods you are allowed to override. This takes
+away some of these concerns, as with sufficient effort on the part of the
+framework designer, the language tooling can enforce the contract. Even so such
+an API can be complex for you to understand and difficult for the framework
+designer to maintain.</p>
+<p>Many languages, such as Python, Ruby and JavaScript, don't have the tools to
+offer such guidance. You can subclass any base class. You can override any
+method. The only guidance is documentation. You may feel a bit lost as a
+result.</p>
+<p>A framework tends to evolve over time to let you override more methods in more
+classes, and thus grows in complexity. This complexity doesn't grow just
+linearly as methods get added, as you have to worry about their interaction as
+well. A framework that has to deal with a variety of subclasses that override a
+wide range of methods can expect less from them. Too much flexibility can make
+it harder for the framework to offer useful features.</p>
+<p>Base classes also don't lend themselves very well to run-time dynamism - some
+languages (like Python) <em>do</em> let you generate a subclass dynamically with
+custom methods, but that kind of code is difficult to understand.</p>
+<p>I think the disadvantages of subclassing outweigh the advantages for a
+framework's external API. I still sometimes use base classes <em>internally</em> in a
+library or framework -- base classes are a lightweight way to do reuse there.
+In this context many of the disadvantages go away: you are in control of the
+base class contract yourself and you presumably understand it.</p>
+<p>I also sometimes use an otherwise empty base class to define an interface, but
+that's really another pattern which I discuss next.</p>
+</div>
+</div>
+<div class="section" id="pattern-interfaces">
+<h2>Pattern: interfaces</h2>
+<p>The framework provides an interface that you as the application developer can
+implement. You implement one or more methods that the framework calls.</p>
+<div class="section" id="id3">
+<h3>Fictional example</h3>
+<pre class="code python literal-block">
+<span class="kn">from</span> <span class="nn">framework</span> <span class="kn">import</span> <span class="n">Form</span><span class="p">,</span> <span class="n">IFormBackend</span>
+
+<span class="k">class</span> <span class="nc">MyFormBackend</span><span class="p">(</span><span class="n">IFormBackend</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="o">...</span> <span class="n">application</span> <span class="n">code</span> <span class="n">to</span> <span class="n">load</span> <span class="n">the</span> <span class="n">data</span> <span class="n">here</span> <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="o">...</span> <span class="n">application</span> <span class="n">code</span> <span class="n">save</span> <span class="n">the</span> <span class="n">data</span> <span class="n">somewhere</span> <span class="o">...</span>
+
+<span class="n">my_form</span> <span class="o">=</span> <span class="n">Form</span><span class="p">(</span><span class="n">MyFormBackend</span><span class="p">())</span>
+</pre>
+</div>
+<div class="section" id="real-world-example-python-iterable-iterator">
+<h3>Real-world example: Python iterable/iterator</h3>
+<p>The iterable/iterator protocol in Python is an example of an interface. If you
+implement it, the framework (in this case the Python language) will be able to
+do all sorts of things with it -- print out its contents, turn it into a list,
+reverse it, etc.</p>
+<pre class="code python literal-block">
+<span class="k">class</span> <span class="nc">RandomIterable</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+         <span class="k">return</span> <span class="bp">self</span>
+    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="s">"go"</span><span class="p">,</span> <span class="s">"stop"</span><span class="p">])</span> <span class="o">==</span> <span class="s">"stop"</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">StopIteration</span>
+        <span class="k">return</span> <span class="mi">1</span>
+</pre>
+</div>
+<div class="section" id="faking-interfaces">
+<h3>Faking interfaces</h3>
+<p>Many typed languages offer native support for interfaces. But what if your
+language doesn't do that?</p>
+<p>In a dynamically typed language you don't really <em>need</em> to do anything: any
+object can implement any interface. It's just you don't really get a lot of
+guidance from the language. What if you want a bit more?</p>
+<p>In Python you can use the standard library <cite>abc</cite> module, or <cite>zope.interface</cite>.
+You can also use the <cite>typing</cite> module and implement base classes and in Python
+3.8, <a class="reference external" href="https://www.python.org/dev/peps/pep-0544">PEP-544</a> protocols.</p>
+<p>But let's say you don't have all of that or don't want to bother yet as you're
+just prototyping. You can use a simple Python base class to describe an
+interface:</p>
+<pre class="code python literal-block">
+<span class="k">class</span> <span class="nc">IFormBackend</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"Load the data from the backend. Should return a dict with the data."</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="s">"Save the data dict to the backend."</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</pre>
+<p>It doesn't do anything, which is the point - it just describes the methods that
+the application developer should implement. You could supply one or two with a
+simple default implementation, but that's it. You may be tempted to implement
+framework behavior on it, but that brings you into base class land.</p>
+</div>
+<div class="section" id="id4">
+<h3>Trade-offs</h3>
+<p>The trade-offs are quite similar to those of callback functions. This is a
+useful pattern to use if you want to define related functionality in a single
+bundle.</p>
+<p>I go for interfaces if my framework offers a more extensive contract that
+an application needs to implement, especially if the application
+needs to maintain its own internal state.</p>
+<p>The use of interfaces can lead to clean composition-oriented designs, where you
+adapt one object into another.</p>
+<p>You can use run-time dynamism like with functions where you assemble an
+object that implements an interface dynamically.</p>
+<p>Many languages offer interfaces as a language feature, and any object-oriented
+language can fake them. Or have too many ways to do it, like Python.</p>
+</div>
+</div>
+<div class="section" id="pattern-imperative-registration-api">
+<h2>Pattern: imperative registration API</h2>
+<p>You register your code with the framework in a registry object.</p>
+<p>When you have a framework that dispatches on a wide range of inputs, and you
+need to plug in application specific code that handles it, you are going to
+need some type of registry.</p>
+<p>What gets registered can be a callback or an object that implements an
+interface -- it therefore builds on those patterns.</p>
+<p>The application developer needs to call a registration method explicitly.</p>
+<p>Frameworks can have specific ways to configure their registries that build on
+top of this basic pattern -- I will elaborate on that later.</p>
+<div class="section" id="id5">
+<h3>Fictional Example</h3>
+<pre class="code python literal-block">
+<span class="kn">from</span> <span class="nn">framework</span> <span class="kn">import</span> <span class="n">form_save_registry</span>
+
+<span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+   <span class="o">...</span> <span class="n">application</span> <span class="n">code</span> <span class="n">to</span> <span class="n">save</span> <span class="n">the</span> <span class="n">data</span> <span class="n">somewhere</span> <span class="o">...</span>
+
+<span class="c"># we configure what save function to use for the form named 'my_form'</span>
+<span class="n">form_save_registry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s">'my_form'</span><span class="p">,</span> <span class="n">save</span><span class="p">)</span>
+</pre>
+</div>
+<div class="section" id="real-world-example-falcon-web-framework">
+<h3>Real-world example: Falcon web framework</h3>
+<p>A URL router such as in a web framework uses some type of registry. Here is
+an example from the Falcon web framework:</p>
+<pre class="code python literal-block">
+<span class="k">class</span> <span class="nc">QuoteResource</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+        <span class="o">...</span> <span class="n">user</span> <span class="n">code</span> <span class="o">...</span>
+
+<span class="n">api</span> <span class="o">=</span> <span class="n">falcon</span><span class="o">.</span><span class="n">API</span><span class="p">()</span>
+<span class="n">api</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s">'/quote'</span><span class="p">,</span> <span class="n">QuoteResource</span><span class="p">())</span>
+</pre>
+<p>In this example you can see two patterns go together: <cite>QuoteResource</cite>
+implements an (implicit) interface, and you register it with a particular
+route.</p>
+<p>Application code can register handlers for a variety of routes, and the
+framework then uses the registry to match a request's URL with a route, and
+then can all into user code to generate a response.</p>
+</div>
+<div class="section" id="id6">
+<h3>Trade-offs</h3>
+<p>I use this pattern a lot, as it's easy to implement and good enough for many
+use cases. It has a minor drawback: you can't easily see that configuration is
+taking place when you read code. Sometimes I expose a more sophisticated
+configuration API on top of it: a DSL or language integrated registration or
+declaration, which I discuss later. But this is foundational.</p>
+<p>Calling a method on a registry is the most simple and direct form to register
+things. It's easy to implement, typically based on a hash map, though you can
+also use other data structures, such as trees.</p>
+<p>The registration order can matter. What happens if you make the same
+registration twice? Perhaps the registry rejects the second registration.
+Perhaps it allows it, silently overriding the previous one. There is no general
+system to handle this, unlike patterns which I describe later.</p>
+<p>Registration can be done anywhere in the application which makes it possible to
+configure the framework dynamically. But this can also lead to complexity and
+the framework can offer fewer guarantees if its configuration can be updated at
+any moment.</p>
+<p>In a language that supports import-time side effects, you can do your
+registrations during import time. That makes the declarations stand out more.
+This is simple to implement, but it's also difficult to control and understand
+the order of imports. This makes it difficult for the application developer to
+do overrides. Doing a lot of work during import time in general can lead to
+hard to predict behavior.</p>
+</div>
+</div>
+<div class="section" id="pattern-convention-over-configuration">
+<h2>Pattern: convention over configuration</h2>
+<p>The framework configures itself automatically based on your use of conventions
+in application code. Configuration is typically driven by particular names,
+prefixes, and postfixes, but a framework can also inspect other aspects of the
+code, such as function signatures.</p>
+<p>This is typically layered over the procedural registration pattern.</p>
+<p>Ruby on Rails made this famous. Rails will automatically configure the database
+models, views and controllers by matching up names.</p>
+<div class="section" id="id7">
+<h3>Fictional example</h3>
+<pre class="code python literal-block">
+<span class="c"># the framework looks for things prefixed form_save_. It hooks this</span>
+<span class="c"># up with `myform` which is defined elsewhere in a module named `forms`</span>
+<span class="k">def</span> <span class="nf">form_save_myform</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+   <span class="o">...</span> <span class="n">application</span> <span class="n">code</span> <span class="n">to</span> <span class="n">save</span> <span class="n">the</span> <span class="n">data</span> <span class="n">somewhere</span> <span class="o">...</span>
+</pre>
+</div>
+<div class="section" id="real-world-example-pytest">
+<h3>Real-world example: pytest</h3>
+<p>pytest uses convention over configuration to find tests. It looks for modules
+and functions prefixed by <cite>test_</cite>.</p>
+<p>pytest also goes further and inspects the arguments to functions to figure out
+more things.</p>
+<pre class="code python literal-block">
+<span class="k">def</span> <span class="nf">test_ehlo</span><span class="p">(</span><span class="n">smtp_connection</span><span class="p">):</span>
+    <span class="n">response</span><span class="p">,</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">smtp_connection</span><span class="o">.</span><span class="n">ehlo</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">response</span> <span class="o">==</span> <span class="mi">250</span>
+    <span class="k">assert</span> <span class="mi">0</span>  <span class="c"># for demo purposes</span>
+</pre>
+<p>In this example, pytest knows that <cite>test_ehlo</cite> is a test, because it is
+prefixed with <cite>test_</cite>. It also knows that the argument <cite>smtp_connection</cite> is a
+fixture and looks for one in the same module (or in its package).</p>
+<p>Django uses convention over configuration in places, for instance when it looks
+for the variable <cite>urlpatterns</cite> in a specially named module to figure out what
+URL routes an application provides.</p>
+</div>
+<div class="section" id="id8">
+<h3>Trade-offs</h3>
+<p>Convention over configuration can be great. It allows the user to type code and
+have it work without <em>any</em> ceremony. It can enforce useful norms that makes
+code easier to read -- it makes sense to prefix tests with <cite>test_</cite> anyway, as
+that allows the human reader to recognize them.</p>
+<p>I like convention over configuration in moderation, for some use cases. For
+more complex use cases I prefer other patterns that allow registration with
+minimal ceremony by using features integrated into the language, such as
+annotation or decorator syntax.</p>
+<p>The more conventions a framework has, the more disadvantages show up. You have
+to learn the rules, their interactions, and remember them. You may sometimes
+accidentally invoke them even though you don't want to, just by using the wrong
+name. You may want to structure your application's code in a way that would be
+very useful, but doesn't really work with the conventions.</p>
+<p>And what if you wanted your registrations to be dynamic, based on database
+state, for instance? Convention over configuration is a hindrance here, not a
+help. The developer may need to fall back to a different, imperative
+registration API, and this may be ill-defined and difficult to use.</p>
+<p>It's harder for the framework to implement some patterns -- what if
+registrations need to be parameterized, for instance? That's easy with
+functions and objects, but here the framework may need more special naming
+conventions to let you influence that. That may lead the framework designer to
+use classes over functions, as in many languages these can have attributes with
+particular names.</p>
+<p>Static type checks are of little use with convention over configuration -- I
+don't know of a type system that can enforce you implement various methods if
+you postfix your class with the name <cite>View</cite>, for instance.</p>
+<p>If you have a language with enough run-time introspection capabilities such as
+Ruby, Python or JavaScript, it's pretty easy to implement convention over
+configuration. It's a lot harder for languages that don't offer those features,
+but it may still be possible with sufficient compiler magic. But those same
+languages are often big on being explicit, and convention over configuration's
+magic doesn't really fit well with that.</p>
+</div>
+</div>
+<div class="section" id="pattern-metaclass-based-registration">
+<h2>Pattern: metaclass based registration</h2>
+<p>When you subclass a framework-provided baseclass, it gets registered with
+the framework.</p>
+<p>Some languages such as Python and Ruby offer meta-classes. These let you do two
+things: change the behavior of classes in fundamental ways, and do side-effects
+when the class is imported. You can do things during class declaration that you
+normally only can do during instantiation.</p>
+<p>A framework can exploit these side-effects to do some registration.</p>
+<div class="section" id="id9">
+<h3>Fictional example</h3>
+<pre class="code python literal-block">
+<span class="kn">from</span> <span class="nn">framework</span> <span class="kn">import</span> <span class="n">FormBase</span>
+
+<span class="k">class</span> <span class="nc">MyForm</span><span class="p">(</span><span class="n">FormBase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="o">...</span> <span class="n">application</span> <span class="n">code</span> <span class="n">save</span> <span class="n">the</span> <span class="n">data</span> <span class="n">somewhere</span> <span class="o">...</span>
+
+<span class="c"># the framework now knows about MyForm without further action from you</span>
+</pre>
+</div>
+<div class="section" id="real-world-example-django">
+<h3>Real-world example: Django</h3>
+<p>When you declare a Django model by subclassing from its <cite>Model</cite> base class,
+Django automatically creates a new relational database table for it.</p>
+<pre class="code python literal-block">
+<span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+
+<span class="k">class</span> <span class="nc">Person</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">first_name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+    <span class="n">last_name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+</pre>
+</div>
+<div class="section" id="id10">
+<h3>Trade-offs</h3>
+<p>I rarely use these because they are so hard to reason about and because it's so
+easy to break assumptions for the person who subclasses them.</p>
+<p>Meta-classes are notoriously hard to implement. If they're not implemented
+correctly, they can also lead to surprising behavior that you may need to deal
+with when you use the framework. Basic assumptions that you may have about the
+way a class behaves can go out of the door.</p>
+<p>Import-time side-effects are difficult to control -- in what order does this
+happen?</p>
+<p>Python has a simpler way to do side-effects for class declarations using
+decorators.</p>
+<p>A base-class driven design for configuration may lead the framework designer
+towards meta-classes, further complicating the way the framework uses.</p>
+<p>Many languages don't support this pattern. It can be seen as a special
+case of language integrated registration, discussed next.</p>
+</div>
+</div>
+<div class="section" id="pattern-language-integrated-registration">
+<h2>Pattern: language integrated registration</h2>
+<p>You configure the application by using framework-provided annotations for code.
+Registrations happen immediately.</p>
+<p>Many programming languages offer some syntax aid for annotating functions,
+classes and more with metadata. Java has annotations. Rust has attributes.
+Python has decorators which can be used for this purpose as well.</p>
+<p>These annotations can be used as a way to drive configuration in a registry.</p>
+<div class="section" id="id11">
+<h3>Fictional example</h3>
+<pre class="code python literal-block">
+<span class="kn">from</span> <span class="nn">framework</span> <span class="kn">import</span> <span class="n">form_save_registry</span>
+
+<span class="c"># we define and configure the function at the same time</span>
+<span class="nd">@form_save_registry.register</span><span class="p">(</span><span class="s">'my_form'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+   <span class="o">...</span> <span class="n">application</span> <span class="n">code</span> <span class="n">to</span> <span class="n">save</span> <span class="n">the</span> <span class="n">data</span> <span class="n">somewhere</span> <span class="o">...</span>
+</pre>
+</div>
+<div class="section" id="real-world-example-flask-web-framework">
+<h3>Real-world example: Flask web framework</h3>
+<p>A real-world example is the <cite>@app.route</cite> decorator of the Flask web framework.</p>
+<pre class="code python literal-block">
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">'/'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">hello_world</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s">'Hello, World!'</span>
+</pre>
+</div>
+<div class="section" id="id12">
+<h3>Trade-offs</h3>
+<p>I use this method of configuring software sometimes, but I'm also aware of its
+limitations -- I tend to go for language integrated <em>declaration</em>, discussed
+below, which looks identical to the end user but is more predictable.</p>
+<p>I'm warier than most about exposing this as an API to application developers,
+but am happy to use it inside a library or codebase, much like base classes.
+The ad-hoc nature of import-time side effects make me reach for more
+sophisticated patterns of configuration when I have to build a solid API.</p>
+<p>This pattern is lightweight to implement at least in Python -- it's not much
+harder than a registry. Your mileage will vary dependent on language. Unlike
+convention over configuration, configuration is explicit and stands out in
+code, but the amount of ceremony is kept to a minimum. The configuration
+information is co-located with the code that is being registered.</p>
+<p>Unlike convention over configuration, there is a natural way to parameterize
+registration with metadata.</p>
+<p>In languages like Python this is implemented as a possibly significant
+import-time side-effect, and may have surprising import order dependencies. In
+a language like Rust this is done by compiler macro magic -- I think the Rocket
+web framework is an example, but I'm <a class="reference external" href="https://mobile.twitter.com/faassen/status/1198341833060999169">still trying to understand how it
+works</a>.</p>
+</div>
+</div>
+<div class="section" id="pattern-dsl-based-declaration">
+<h2>Pattern: DSL-based declaration</h2>
+<p>You use a DSL (domain specific language) to configure the framework. This DSL
+offers some way to hook in custom code. The DSL can be an entirely custom
+language, but you can also leverage JSON, YAML or (shudder) XML.</p>
+<p>You can also combine these: I've helped implement a workflow engine that's
+configured with JSON, and expressions in it are a subset of Python expressions
+with a custom parser and interpreter.</p>
+<p>It is typically layered over some kind of imperative registration system.</p>
+<div class="section" id="id13">
+<h3>Fictional example</h3>
+<pre class="code JSON literal-block">
+<span class="p">{</span>
+   <span class="nt">"form"</span><span class="p">:</span> <span class="p">{</span>
+     <span class="nt">"name"</span><span class="p">:</span> <span class="s2">"my_form"</span><span class="p">,</span>
+     <span class="nt">"save"</span><span class="p">:</span> <span class="s2">"my_module.save"</span>
+   <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+<p>We have a custom language (in this case done with JSON) that lets us configure
+the way our system works. Here we plug in the <cite>save</cite> behavior for <cite>my_form</cite> by
+referring to the function <cite>save</cite> in some Python module <cite>my_module</cite>.</p>
+</div>
+<div class="section" id="real-world-example-plone-cms-framework">
+<h3>Real-world example: Plone CMS framework</h3>
+<p><a class="reference external" href="https://trypyramid.com/">Pyramid</a> and <a class="reference external" href="https://plone.org/">Plone</a> both are descendants of <a class="reference external" href="https://blog.startifact.com/posts/my-exit-from-zope.html">Zope</a>, and you can use ZCML, a
+XML-derived configuration language with them both.</p>
+<p>Here is some ZCML from Plone:</p>
+<pre class="code XML literal-block">
+<span class="nt">&lt;configure</span>
+    <span class="na">xmlns=</span><span class="s">"http://namespaces.zope.org/zope"</span>
+    <span class="na">xmlns:browser=</span><span class="s">"http://namespaces.zope.org/browser"</span>
+    <span class="na">i18n_domain=</span><span class="s">"my.package"</span><span class="nt">&gt;</span>
+
+  <span class="c">&lt;!-- override folder_contents --&gt;</span>
+  <span class="nt">&lt;configure</span> <span class="na">package=</span><span class="s">"plone.app.content.browser"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;browser:page</span>
+          <span class="na">for=</span><span class="s">"Products.CMFCore.interfaces._content.IFolderish"</span>
+          <span class="na">class=</span><span class="s">"my.package.browser.foldercontents.MyFolderContentsView"</span>
+          <span class="na">name=</span><span class="s">"folder_contents"</span>
+          <span class="na">template=</span><span class="s">"folder_contents.pt"</span>
+          <span class="na">layer=</span><span class="s">"my.package.interfaces.IMyPackageLayer"</span>
+          <span class="na">permission=</span><span class="s">"cmf.ListFolderContents"</span>
+      <span class="nt">/&gt;</span>
+  <span class="nt">&lt;/configure&gt;</span>
+<span class="nt">&lt;/configure&gt;</span>
+</pre>
+<p>This demonstrates a feature offered by a well-designed DSL: a way to do a
+structured override of behavior in the framework.</p>
+</div>
+<div class="section" id="id14">
+<h3>Trade-offs</h3>
+<p>Custom DSLs are a very powerful tool if you actually need them, and you do need
+them at times. But they are also a lot more heavyweight than the other methods
+discussed, and that's a drawback.</p>
+<p>A custom DSL is thorough: a framework designer can build it with very clean
+boundaries, with a clear grammar and hard checks to see whether code conforms
+to this grammar. If you build your DSL on JSON or XML, you can implement such
+checks pretty easily using one of the various schema implementations.</p>
+<p>A custom DSL gives the potential for non-developers to configure application
+behavior. At some point in a DSL there is a need to interface with user code,
+but this may be abstracted away quite far. It lets non-developers reuse code
+implemented by developers.</p>
+<p>A DSL can be extended with a GUI to make it even easier for non-developers to
+configure it.</p>
+<p>Since code written in a DSL can be stored in a database, you can store complex
+configuration in a database.</p>
+<p>A DSL can offer certain security guarantees -- you can ensure that DSL code can
+only reach into a limited part of your application.</p>
+<p>A DSL can implement a declaration engine with sophisticated behavior -- for
+instance the general detection of configuration conflicts (you try to configure
+the same thing in conflicting ways in multiple places), and structured, safe
+overrides that are independent of code and import order. A DSL doesn't have to
+use such sophistication, but a framework designer that designs a DSL is
+naturally lead in such a direction.</p>
+<p>A drawback of DSL-based configuration is that it is quite distant from the code
+that it configures. That is fine for some use cases, but overkill for others. A
+DSL can cause mental overhead -- the applciation developer not only needs to
+read the application's code but also its configuration files in order to
+understand the behavior of an application. For many frameworks it can be much
+nicer to co-locate configuration with code.</p>
+<p>A DSL also provides little flexibility during run-time. While you <em>could</em>
+generate configuration code dynamically, that's a level of meta that's quite
+expensive (lots of generate/parse cycles) and it can lead to headaches for the
+developers trying to understand what's going on.</p>
+<p>DSL-based configuration is also quite heavy to implement compared to many other
+more lightweight configuration options described.</p>
+</div>
+</div>
+<div class="section" id="pattern-imperative-declaration">
+<h2>Pattern: imperative declaration</h2>
+<p>You use a declaration engine like in a DSL, but you drive it from programming
+language code in an imperative way, like imperative registration. In fact, an
+imperative declaration system can be layered over a imperative registration
+system.</p>
+<p>The difference from imperative registration is that the framework implements a
+deferred configuration engine, instead of making registrations immediately.
+Configuration commands are first collected in a separate configuration phase,
+and only after collection is complete are they executed, resulting in actual
+registrations.</p>
+<div class="section" id="id15">
+<h3>Fictional example</h3>
+<pre class="code python literal-block">
+<span class="kn">from</span> <span class="nn">framework</span> <span class="kn">import</span> <span class="n">Config</span>
+
+<span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+   <span class="o">...</span> <span class="n">application</span> <span class="n">code</span> <span class="n">to</span> <span class="n">save</span> <span class="n">the</span> <span class="n">data</span> <span class="n">somewhere</span> <span class="o">...</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
+<span class="n">config</span><span class="o">.</span><span class="n">form_save</span><span class="p">(</span><span class="s">'my_form'</span><span class="p">,</span> <span class="n">save</span><span class="p">)</span>
+<span class="n">config</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+</pre>
+<p>The idea here is that configuration registries are only modified when
+<cite>config.commit()</cite> happens, and only after the configuration has been validated.</p>
+</div>
+<div class="section" id="real-world-example-pyramid-web-framework">
+<h3>Real-world example: Pyramid web framework</h3>
+<p>From the Pyramid web framework:</p>
+<pre class="code python literal-block">
+<span class="k">def</span> <span class="nf">hello_world</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="s">'Hello World!'</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">Configurator</span><span class="p">()</span> <span class="k">as</span> <span class="n">config</span><span class="p">:</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s">'hello'</span><span class="p">,</span> <span class="s">'/'</span><span class="p">)</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">add_view</span><span class="p">(</span><span class="n">hello_world</span><span class="p">,</span> <span class="n">route_name</span><span class="o">=</span><span class="s">'hello'</span><span class="p">)</span>
+</pre>
+<p>This looks very similar to a plain registry, but inside something else is going
+on: it first collects <em>all</em> registrations, and then generically detects whether
+there are conflicts, and generically applies overrides. Once the code exits the
+<cite>with</cite> statement, config is complete and committed.</p>
+</div>
+<div class="section" id="id16">
+<h3>Trade-offs</h3>
+<p>This brings some of the benefits of a configuration DSL to code. Like a DSL,
+the configuration system can detect conflicts (the route name 'hello' is
+registered twice), and it allows sophisticated override patterns that are not
+dependent on the vagaries of registration order or import order.</p>
+<p>Another benefit is that configuration can be generated programmatically, so
+this allows for a certain amount of run-time dynamism without some the costs
+that a DSL would have. It is still good to avoid such dynamism as much as
+possible though, as it can make for very difficult to comprehend code.</p>
+<p>The code that is configured may still not be not co-located with the
+configuration, but at least it's all code, instead of a whole new language.</p>
+</div>
+</div>
+<div class="section" id="pattern-language-integrated-declaration">
+<h2>Pattern: language integrated declaration</h2>
+<p>You configure the application by using framework-provided annotations for code.
+This configuration is declarative and does not immediately take place.</p>
+<p>Language integration declaration looks like language integrated registration,
+but uses a configuration engine like with imperative declaration.</p>
+<div class="section" id="id17">
+<h3>Fictional example</h3>
+<pre class="code python literal-block">
+<span class="kn">from</span> <span class="nn">framework</span> <span class="kn">import</span> <span class="n">Config</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
+
+<span class="c"># we define and configure the function at the same time</span>
+<span class="nd">@config.form_save</span><span class="p">(</span><span class="s">'my_form'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+   <span class="o">...</span> <span class="n">application</span> <span class="n">code</span> <span class="n">to</span> <span class="n">save</span> <span class="n">the</span> <span class="n">data</span> <span class="n">somewhere</span> <span class="o">...</span>
+
+<span class="c"># elsewhere before application starts</span>
+<span class="n">config</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+</pre>
+</div>
+<div class="section" id="real-world-example-morepath-web-framework">
+<h3>Real-world example: Morepath web framework</h3>
+<p>My own <a class="reference external" href="https://morepath.readthedocs.io">Morepath</a> web framework is configured this way.</p>
+<pre class="code python literal-block">
+<span class="kn">import</span> <span class="nn">morepath</span>
+
+<span class="k">class</span> <span class="nc">App</span><span class="p">(</span><span class="n">morepath</span><span class="o">.</span><span class="n">App</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="nd">@App.path</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s">'/hello'</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Hello</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="nd">@App.view</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">Hello</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">view_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s">"Hello world!"</span>
+</pre>
+<p>Here two things happen: an instance of <cite>Hello</cite> is registered for the route
+<cite>/hello</cite>, and a <cite>GET</cite> view is registered for such instances. You can supply
+these decorators in any order in any module -- the framework will figure it
+out. If you subclass <cite>App</cite>, and re-register the <cite>/hello</cite> path, you have a new
+application with new behavior for that path, but the same view.</p>
+</div>
+<div class="section" id="id18">
+<h3>Trade-offs</h3>
+<p>I like this way of configuring code very much, so I built a framework for it.</p>
+<p>This <em>looks</em> very similar to language-integrated <strong>registration</strong> but the
+behavior is declarative.</p>
+<p>It's more explicit than convention over configuration, but still low on
+ceremony, like language-integrated registration. It co-locates configuration
+with code.</p>
+<p>It eliminates many of the issues with the more lightweight language-integrated
+registration while retaining many of its benefits. It imposes a lot of
+structure on how configuration works, and this can lead to useful properties:
+conflict detection and overrides, for instance.</p>
+<p>It's a lot more heavy-weight than just passing in a callback or object with an
+interface -- for many frameworks this is more than enough ceremony, and nothing
+beats how easy that is to implement and test.</p>
+<p>You can't store it in a database or give it to a non-programmer: for that, use
+a DSL.</p>
+<p>But if want a configuration language that's powerful and friendly, this is a
+good way to go.</p>
+<p>It's a lot more difficult to implement though, which is a drawback. If you use
+Python, you're in luck: I've implemented a framework to help you build this,
+called <a class="reference external" href="https://dectate.readthedocs.io">Dectate</a>. My <a class="reference external" href="https://morepath.readthedocs.io">Morepath</a> web framework is built on it.</p>
+<p>In Dectate, import-time side-effects are minimized: when the decorator is
+executed the parameters are stored, but registration only happens when
+<cite>commit()</cite> is executed. This means there is no dependence on run-time import
+order, and conflict detection and overrides are supported in a general way.</p>
+</div>
+</div>
+<div class="section" id="conclusion">
+<h2>Conclusion</h2>
+<p>I hope this helps developers who have to deal with frameworks to understand the
+decisions made by these frameworks better. If you have a problem with a
+framework, perhaps I gave you some arguments that lets you express it better as
+well.</p>
+<p>And if you design a framework -- which you should do, as larger applications
+need frameworks to stay coherent -- you now hopefully have some more concepts
+to work with to help you make better design decisions.</p>
+</div>
+</div>
+    </div>
+    <aside class="postpromonav">
+    <nav>
+    
+        <ul itemprop="keywords" class="tags">
+           <li><a class="tag p-category" href="../categories/frameworks.html" rel="tag">frameworks</a></li>
+           <li><a class="tag p-category" href="../categories/morepath.html" rel="tag">morepath</a></li>
+           <li><a class="tag p-category" href="../categories/planetpython.html" rel="tag">planetpython</a></li>
+           <li><a class="tag p-category" href="../categories/python.html" rel="tag">python</a></li>
+        </ul>
+
+    
+        <ul class="pager">
+            <li class="previous">
+                <a href="secret-weblog-highlights.html" rel="prev" title="Secret Weblog Highlights">Previous post</a>
+            </li>
+        </ul>
+
+    </nav>
+    </aside>
+        <section class="comments">
+        <h2>Comments</h2>
+        
+        
+        <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="secretweblog",
+            disqus_url="http://blog.startifact.com/posts/framework-patterns.html",
+        disqus_title="Framework Patterns",
+        disqus_identifier="cache/posts/framework-patterns.html",
+        disqus_config = function () {
+            this.language = "en";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+        </section>
+    
+
+</article>
+
+        
+       <script>var disqus_shortname="secretweblog";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+
+
+
+        </div>
+        <!--End of body content-->
+
+        <footer>
+            Contents © 2005-2019 <a href="mailto:faassen@startifact.com">Martijn Faassen</a> |
+<a href="https://twitter.com/faassen">Twitter</a> |
+<a href="https://github.com/faassen">Github</a>
+            
+        </footer>
+    </div>
+</div>
+
+
+            <script src="../assets/js/all-nocdn.js"></script>
+    
+
+    <script>jQuery("a.image-reference").colorbox({rel:"gal",maxWidth:"100%",maxHeight:"100%",scalePhotos:true});</script>
+    <!-- fancy dates -->
+    <script>
+    moment.locale("");
+    fancydates(0, "YYYY-MM-DD HH:mm");
+    </script>
+    <!-- end fancy dates -->
+    
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-37934383-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+
+</body>
+</html>

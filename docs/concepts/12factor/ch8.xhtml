@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>VII. Port binding</title>
+<link href="stylesheet.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+<h1>VII. Port binding</h1>
+<h2 id="export-services-via-port-binding">Export services via port binding</h2><p>Web apps are sometimes executed inside a webserver container. For example, PHP apps might run as a module inside Apache HTTPD, or Java apps might run inside Tomcat.</p><p><strong>The twelve-factor app is completely self-contained</strong> and does not rely on runtime injection of a webserver into the execution environment to create a web-facing service. The web app <strong>exports HTTP as a service by binding to a port</strong>, and listening to requests coming in on that port.</p><p>In a local development environment, the developer visits a service URL like <code>http://localhost:5000/</code> to access the service exported by their app. In deployment, a routing layer handles routing requests from a public-facing hostname to the port-bound web processes.</p><p>This is typically implemented by using dependency declaration to add a webserver library to the app, such as Tornado for Python, Thin for Ruby, or Jetty for Java and other JVM-based languages. This happens entirely in <em>user space</em>, that is, within the app's code. The contract with the execution environment is binding to a port to serve requests.</p><p>HTTP is not the only service that can be exported by port binding. Nearly any kind of server software can be run via a process binding to a port and awaiting incoming requests. Examples include ejabberd (speaking XMPP), and Redis (speaking the Redis protocol).</p><p>Note also that the port-binding approach means that one app can become the backing service for another app, by providing the URL to the backing app as a resource handle in the config for the consuming app.</p>
+</body>
+</html>

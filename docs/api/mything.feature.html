@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module mything.feature</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="mything.html"><font color="#ffffff">mything</font></a>.feature</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/tv/Documents/abc/mything/mything/feature.py">/home/tv/Documents/abc/mything/mything/feature.py</a></font></td></tr></table>
+    <p><tt><a href="#Feature">Feature</a>&nbsp;support.</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="mything.feature.html#EnvBackend">EnvBackend</a>
+</font></dt><dt><font face="helvetica, arial"><a href="mything.feature.html#Feature">Feature</a>
+</font></dt><dt><font face="helvetica, arial"><a href="mything.feature.html#Logger">Logger</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="EnvBackend">class <strong>EnvBackend</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>Environment&nbsp;variable&nbsp;based&nbsp;backend<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="EnvBackend-exists"><strong>exists</strong></a>(self, name)</dt></dl>
+
+<dl><dt><a name="EnvBackend-is_active"><strong>is_active</strong></a>(self, name)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Feature">class <strong>Feature</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Feature">Feature</a>(backend,&nbsp;logger)<br>
+&nbsp;<br>
+The&nbsp;feature&nbsp;manager.<br>
+&nbsp;<br>
+Usage<br>
+=====<br>
+&nbsp;<br>
+Backends<br>
+--------<br>
+First&nbsp;thing&nbsp;to&nbsp;do&nbsp;is&nbsp;to&nbsp;choose&nbsp;a&nbsp;backend&nbsp;to&nbsp;use.<br>
+&nbsp;<br>
+-&nbsp;<a href="#EnvBackend">EnvBackend</a>()&nbsp;-&nbsp;Environment&nbsp;variable&nbsp;based&nbsp;<br>
+-&nbsp;Django&nbsp;Database:&nbsp;db_django<br>
+-&nbsp;Google&nbsp;Datastore:&nbsp;google_cloud_datastore<br>
+-&nbsp;JSON&nbsp;File:&nbsp;jsonfile<br>
+-&nbsp;Local&nbsp;Memory&nbsp;(testing):&nbsp;localmemory<br>
+-&nbsp;Memcache:&nbsp;memcached<br>
+-&nbsp;MongoDB:&nbsp;db_mongodb<br>
+-&nbsp;Redis&nbsp;Key/Value:&nbsp;redis_backend<br>
+-&nbsp;SQL&nbsp;Database:&nbsp;db_sqlalchemy<br>
+-&nbsp;Togglz&nbsp;File:&nbsp;togglzfile<br>
+&nbsp;<br>
+Crating&nbsp;the&nbsp;feature&nbsp;instance<br>
+----------------------------<br>
+When&nbsp;creating&nbsp;a&nbsp;feature&nbsp;instance&nbsp;one&nbsp;must&nbsp;pass&nbsp;a&nbsp;backend&nbsp;and&nbsp;an&nbsp;optional&nbsp;logger&nbsp;to&nbsp;use.<br>
+&nbsp;<br>
+..&nbsp;code-block::&nbsp;python<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;from&nbsp;feature&nbsp;import&nbsp;<a href="#Feature">Feature</a><br>
+&nbsp;&nbsp;&nbsp;from&nbsp;flagon.backends.jsonfile&nbsp;import&nbsp;JSONFileBackend<br>
+&nbsp;&nbsp;&nbsp;#&nbsp;Make&nbsp;a&nbsp;backend<br>
+&nbsp;&nbsp;&nbsp;backend&nbsp;=&nbsp;JSONFileBackend('example/config.json')<br>
+&nbsp;&nbsp;&nbsp;#&nbsp;Make&nbsp;the&nbsp;feature&nbsp;instance<br>
+&nbsp;&nbsp;&nbsp;feature&nbsp;=&nbsp;<a href="#Feature">Feature</a>(backend)<br>
+&nbsp;<br>
+&nbsp;<br>
+Using&nbsp;the&nbsp;feature&nbsp;instance<br>
+--------------------------<br>
+Once&nbsp;a&nbsp;feature&nbsp;instance&nbsp;has&nbsp;been&nbsp;made&nbsp;it&nbsp;then&nbsp;can&nbsp;be&nbsp;used&nbsp;to&nbsp;tag&nbsp;callables&nbsp;as&nbsp;features.&nbsp;To&nbsp;do&nbsp;this&nbsp;one&nbsp;uses&nbsp;the&nbsp;feature&nbsp;instance&nbsp;as&nbsp;a&nbsp;decorator.<br>
+&nbsp;<br>
+..&nbsp;code-block::&nbsp;python<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;@feature('a&nbsp;feature')<br>
+&nbsp;&nbsp;&nbsp;def&nbsp;say_something(data):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(data)<br>
+&nbsp;<br>
+Now&nbsp;that&nbsp;the&nbsp;function&nbsp;``say_something``&nbsp;has&nbsp;been&nbsp;tagged&nbsp;with&nbsp;the&nbsp;feature&nbsp;``a&nbsp;feature``&nbsp;it&nbsp;will&nbsp;only&nbsp;execute&nbsp;if&nbsp;``a&nbsp;feature``&nbsp;is&nbsp;set&nbsp;active.<br>
+&nbsp;<br>
+..&nbsp;note::<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;When&nbsp;features&nbsp;are&nbsp;not&nbsp;active&nbsp;they&nbsp;will&nbsp;raise&nbsp;a&nbsp;NameError&nbsp;unless&nbsp;there&nbsp;is&nbsp;a&nbsp;default&nbsp;set.<br>
+&nbsp;<br>
+..&nbsp;note::<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;When&nbsp;a&nbsp;feature&nbsp;is&nbsp;unknown&nbsp;it&nbsp;will&nbsp;raise&nbsp;an&nbsp;flagon.errors.UnknownFeatureError<br>
+&nbsp;<br>
+&nbsp;<br>
+Defaults<br>
+~~~~~~~~<br>
+<a href="#Feature">Feature</a>&nbsp;instance&nbsp;can&nbsp;also&nbsp;define&nbsp;defaults.&nbsp;Defaults&nbsp;are&nbsp;callables&nbsp;that&nbsp;will&nbsp;call&nbsp;**instead**&nbsp;of&nbsp;the&nbsp;original&nbsp;callable&nbsp;if&nbsp;the&nbsp;feature&nbsp;is&nbsp;off.<br>
+&nbsp;<br>
+..&nbsp;code-block::&nbsp;python<br>
+&nbsp;&nbsp;&nbsp;import&nbsp;feature<br>
+&nbsp;&nbsp;&nbsp;def&nbsp;yell(data):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(data.upper())<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;@feature('this&nbsp;feature&nbsp;is&nbsp;off',&nbsp;default=yell)<br>
+&nbsp;&nbsp;&nbsp;def&nbsp;say_something(data):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(data)<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;@feature('this&nbsp;feature&nbsp;is&nbsp;off',&nbsp;default=feature.skip)<br>
+&nbsp;&nbsp;&nbsp;def&nbsp;say_something_else(data):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(data)<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Feature-__call__"><strong>__call__</strong></a>(self, name, default=None)</dt><dd><tt>What&nbsp;acts&nbsp;as&nbsp;a&nbsp;decorator.<br>
+&nbsp;<br>
+:param&nbsp;name:&nbsp;the&nbsp;name&nbsp;of&nbsp;the&nbsp;feature.<br>
+:type&nbsp;name:&nbsp;str<br>
+:param&nbsp;default:&nbsp;the&nbsp;default&nbsp;callable&nbsp;to&nbsp;fall&nbsp;back&nbsp;to.<br>
+:type&nbsp;default:&nbsp;callable&nbsp;or&nbsp;None<br>
+:rtype:&nbsp;callable</tt></dd></dl>
+
+<dl><dt><a name="Feature-__init__"><strong>__init__</strong></a>(self, backend, logger)</dt><dd><tt>Creates&nbsp;the&nbsp;feature&nbsp;manager.<br>
+&nbsp;<br>
+:param&nbsp;backend:&nbsp;the&nbsp;backend&nbsp;to&nbsp;use&nbsp;for&nbsp;storing&nbsp;feature&nbsp;states.<br>
+:type&nbsp;backend:&nbsp;flagon.backends.Backend<br>
+:param&nbsp;logger:&nbsp;the&nbsp;logger&nbsp;like&nbsp;<a href="builtins.html#object">object</a>&nbsp;to&nbsp;use&nbsp;for&nbsp;logging.<br>
+:type&nbsp;logger:&nbsp;logging.<a href="#Logger">Logger</a><br>
+:rtype:&nbsp;<a href="#Feature">Feature</a></tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Logger">class <strong>Logger</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Logger-debug"><strong>debug</strong></a>(*args)</dt></dl>
+
+<dl><dt><a name="Logger-error"><strong>error</strong></a>(*args)</dt></dl>
+
+<dl><dt><a name="Logger-level"><strong>level</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Logger-warn"><strong>warn</strong></a>(*args)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-create"><strong>create</strong></a>(backend=&lt;mything.feature.EnvBackend object at 0x7fa486cae198&gt;, logger=&lt;mything.feature.Logger object at 0x7fa486cae1d0&gt;)</dt></dl>
+ <dl><dt><a name="-getabsfile"><strong>getabsfile</strong></a>(func)</dt></dl>
+ <dl><dt><a name="-skip"><strong>skip</strong></a>(self, *args, **kwargs)</dt></dl>
+</td></tr></table>
+</body></html>

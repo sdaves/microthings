@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" user-scalable="no">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>Best Practices for Designing a Pragmatic RESTful API | Vinay Sahni</title>
+  <meta name="description" content="An API is a user interface for a developer. Learn the best practices to make an API that is easy to adopt and pleasant to use.">
+  <meta property="og:title" content="Best Practices for Designing a Pragmatic RESTful API"/>
+  <meta property="og:site_name" content="Vinay Sahni"/>
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@veesahni">
+  <meta name="twitter:title" content="Best Practices for Designing a Pragmatic RESTful API">
+  <meta name="twitter:description" content="An API is a user interface for a developer. Learn the best practices to make an API that is easy to adopt and pleasant to use.">
+
+    <meta name="twitter:image" content="http://www.vinaysahni.com/images/twitter-cards/best-practices-for-a-pragmatic-restful-api.jpg?N3324LJJkm123">
+
+  <link rel="stylesheet" href="/assets/normalize.css"/>
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/github.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,700i" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/style.css?N3324LJJkm123"/>
+
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="logo">
+      <a href="http://www.vinaysahni.com"><img src="/images/vinay.jpg"></a>
+    </div>
+    <div class="intro">
+      <div class="name"><a href="http://www.vinaysahni.com">Vinay Sahni</a></div>
+      <div class="summary">Full stack developer</div>
+      <div class="summary-separator">&nbsp;&middot;&nbsp;</div>
+      <div class="summary">Founder of <a href="http://www.enchant.com">Enchant</a></div>
+      <div class="links"><a href="mailto:vinay@sahni.org">vinay@sahni.org</a> &nbsp;&middot;&nbsp; <a href="http://twitter.com/veesahni">@veesahni</a></div>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+
+  <div class="content">
+    <div class="time">Last updated August 12, 2015</div>
+
+<div class="post">
+  <h1><a href="">Best Practices for Designing a Pragmatic RESTful API</a></h1>
+
+  <div class="share-box">
+    <a href="http://twitter.com/intent/tweet?via=veesahni&url=http%3A%2F%2Fwww.vinaysahni.com%2Fbest-practices-for-a-pragmatic-restful-api&text=Best+Practices+for+Designing+a+Pragmatic+RESTful+API" class="share-link twitter" target="_blank"><i class="fa fa-fw fa-twitter"></i></a>
+    <a href="https://www.facebook.com/sharer.php?u=http%3A%2F%2Fwww.vinaysahni.com%2Fbest-practices-for-a-pragmatic-restful-api" class="share-link facebook" target="_blank"><i class="fa fa-fw fa-facebook"></i></a>
+    <a href="http://www.reddit.com/submit?url=http%3A%2F%2Fwww.vinaysahni.com%2Fbest-practices-for-a-pragmatic-restful-api&title=Best+Practices+for+Designing+a+Pragmatic+RESTful+API" class="share-link reddit" target="_blank"><i class="fa fa-fw fa-reddit-alien"></i></a>
+    <a href="https://www.linkedin.com/shareArticle?mini=true&source=VinaySahni.com&url=http%3A%2F%2Fwww.vinaysahni.com%2Fbest-practices-for-a-pragmatic-restful-api&title=Best+Practices+for+Designing+a+Pragmatic+RESTful+API&summary=An+API+is+a+user+interface+for+a+developer.+Learn+the+best+practices+to+make+an+API+that+is+easy+to+adopt+and+pleasant+to+use." class="share-link linkedin" target="_blank"><i class="fa fa-fw fa-linkedin"></i></a>
+    <a href="mailto:?subject=Best+Practices+for+Designing+a+Pragmatic+RESTful+API&body=An+API+is+a+user+interface+for+a+developer.+Learn+the+best+practices+to+make+an+API+that+is+easy+to+adopt+and+pleasant+to+use.%20http%3A%2F%2Fwww.vinaysahni.com%2Fbest-practices-for-a-pragmatic-restful-api" class="share-link email" target="_blank"><i class="fa fa-fw fa-envelope-o"></i></a>
+  </div>
+
+  
+
+<a id="top"></a>
+<p>Your data model has started to stabilize and you're in a position to create a public API for your web app. You realize it's hard to make significant changes to your API once it's released and want to get as much right as possible up front. Now, the internet has no shortage on opinions on API design. But, since there's no one widely adopted standard that works in all cases, you're left with a bunch of choices: What formats should you accept? How should you authenticate? Should your API be versioned?</p>
+
+<p>In designing an API for <a href="http://www.enchant.com">Enchant</a> (a <a href="http://www.enchant.com/zendesk-alternative">Zendesk Alternative</a>), I've tried to come up with pragmatic answers to these questions. My goal is for the <a href="http://dev.enchant.com/api/v1">Enchant API</a> to be easy to use, easy to adopt and flexible enough to <a href="http://en.wikipedia.org/wiki/Eating_your_own_dog_food">dogfood</a> for our own user interfaces.</p>
+
+<!-- https://twitter.com/cowboy/status/341890303730544640 -->
+<!-- https://twitter.com/patio11/status/612655761244618752 -->
+<!-- https://twitter.com/erenbali/status/588816206401933312 -->
+
+<div class="tweet">
+  <blockquote class="twitter-tweet" data-cards="hidden" lang="en"><p lang="en" dir="ltr">Really enjoyed this article on REST API design. Heavily informing the part of Starfighter&#39;s game that exposes an API. <a href="http://t.co/2cOwC5Ey9E">http://t.co/2cOwC5Ey9E</a></p>&mdash; Patrick McKenzie (@patio11) <a href="https://twitter.com/patio11/status/612655761244618752">June 21, 2015</a></blockquote>
+</div>
+
+<h2 id="tldr">TL;DR</h2>
+
+<ul>
+<li><a href="#requirements">An API is a user interface for a developer - so put some effort into making it pleasant</a></li>
+<li><a href="#restful">Use RESTful URLs and actions</a></li>
+<li><a href="#ssl">Use SSL everywhere, no exceptions</a></li>
+<li><a href="#docs">An API is only as good as its documentation - so have great documentation</a></li>
+<li><a href="#versioning">Version via the URL, not via headers</a></li>
+<li><a href="#advanced-queries">Use query parameters for advanced filtering, sorting &amp; searching</a></li>
+<li><a href="#limiting-fields">Provide a way to limit which fields are returned from the API</a></li>
+<li><a href="#useful-post-responses">Return something useful from POST, PATCH &amp; PUT requests</a></li>
+<li><a href="#hateoas">HATEOAS isn't practical just yet</a></li>
+<li><a href="#json-responses">Use JSON where possible, XML only if you have to</a></li>
+<li><a href="#snake-vs-camel">You should use camelCase with JSON, but snake_case is 20% easier to read</a></li>
+<li><a href="#pretty-print-gzip">Pretty print by default &amp; ensure gzip is supported</a></li>
+<li><a href="#envelope">Don't use response envelopes by default</a></li>
+<li><a href="#json-requests">Consider using JSON for POST, PUT and PATCH request bodies</a></li>
+<li><a href="#pagination">Paginate using Link headers</a></li>
+<li><a href="#autoloading">Provide a way to autoload related resource representations</a></li>
+<li><a href="#method-override">Provide a way to override the HTTP method</a></li>
+<li><a href="#rate-limiting">Provide useful response headers for rate limiting</a></li>
+<li><a href="#authentication">Use token based authentication, transported over OAuth2 where delegation is needed</a></li>
+<li><a href="#caching">Include response headers that facilitate caching</a></li>
+<li><a href="#errors">Define a consumable error payload</a></li>
+<li><a href="#http-status">Effectively use HTTP Status codes</a></li>
+</ul>
+<p>
+... or just skip to the bottom and <a href="#signup-for-updates"><strong>signup for updates</strong></a><br>
+</p>
+
+
+<!--
+<div class="tweet">
+  <blockquote class="twitter-tweet" data-cards="hidden" lang="en"><p lang="en" dir="ltr">Best Practices for Designing a Pragmatic RESTful API <a href="http://t.co/Tp4LJ6R3OE">http://t.co/Tp4LJ6R3OE</a> by <a href="https://twitter.com/veesahni">@veesahni</a> Definitely worth a read <a href="https://twitter.com/hashtag/rest?src=hash">#rest</a> <a href="https://twitter.com/hashtag/api?src=hash">#api</a></p>&mdash; Ben Alman (@cowboy) <a href="https://twitter.com/cowboy/status/341890303730544640">June 4, 2013</a></blockquote>
+</div>
+-->
+
+<div class="latest-post" style="padding: 20px; background: #fffee4; border: 1px solid #ebc58d;margin-top: 50px; margin-bottom: 50px; border-radius: 5px">
+  <div style="text-align: center; text-transform: uppercase; font-weight: bold; color: #c29f6b;">Latest from the Enchant blog</div>
+  <p><a style="font-size: 1.3em;" href="https://www.enchant.com/blog/app-clarity" target="_blank">How to make people fall in love with your app</a></p>
+  <p>
+    A decent app helps you get the job done.<br>
+    A good app helps you get it done faster.<br>
+    A great app, however, makes it effortless.<br><br>
+
+    ... and those apps, the ones that make things feel effortless, are the ones we love the most.<br><br>
+
+    But what makes an app feel effortless?<br>
+    More importantly, how can you make your app feel effortless?<br>
+  </p>
+  <p>
+    <a href="https://www.enchant.com/blog/app-clarity" target="_blank">READ MORE &rarr;</a>
+  </p>
+</div>
+
+
+<h2 id="requirements">Key requirements for the API</h2>
+
+<p>Many of the API design opinions found on the web are academic discussions revolving around subjective interpretations of fuzzy standards as opposed to what makes sense in the real world. My goal with this post is to describe best practices for a pragmatic API designed for today's web applications. I make no attempt to satisfy a standard if it doesn't feel right. To help guide the decision making process, I've written down some requirements that the API must strive for:</p>
+
+<ul>
+  <li>It should use web standards where they <em>make sense</em></li>
+  <li>It should be friendly to the developer and be explorable via a browser address bar</li>
+  <li>It should be simple, intuitive and consistent to make adoption not only easy but pleasant</li>
+  <li>It should provide enough flexibility to power majority of the <a href="http://www.enchant.com">Enchant</a> UI</li>
+  <li>It should be efficient, while maintaining balance with the other requirements</li>
+</ul>
+
+<p>An API is a developer's UI - just like any UI, it's important to ensure the user's experience is thought out carefully!</p>
+
+<h2 id="restful">Use RESTful URLs and actions</h2>
+
+<p>If there's one thing that has gained wide adoption, it's RESTful principles.  These were first introduced by <a href="http://roy.gbiv.com/">Roy Fielding</a> in <a href="http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm">Chapter 5</a> of his dissertation on <a href="http://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm">network based software architectures</a>.</p>
+
+<p>The key principles of <a href="https://en.wikipedia.org/wiki/Representational_state_transfer">REST</a> involve separating your API into logical resources.  These resources are manipulated using HTTP requests where the method (GET, POST, PUT, PATCH, DELETE) has specific meaning.</p>
+
+<p><strong>But what can I make a resource?</strong> Well, these should be <a href="https://blog.apigee.com/detail/restful_api_design_nouns_are_good_verbs_are_bad">nouns (not verbs!)</a> that make sense from the perspective of the API consumer. Although your internal models may map neatly to resources, it isn't necessarily a one-to-one mapping. The key here is to not leak irrelevant implementation details out to your API! Some of Enchant's nouns would be <em>ticket</em>, <em>user</em> and <em>group</em>.</p>
+
+<p>Once you have your resources defined, you need to identify what actions apply to them and how those would map to your API.  RESTful principles provide strategies to handle <a href="http://en.wikipedia.org/wiki/Create,_read,_update_and_delete">CRUD</a> actions using HTTP methods mapped as follows:</p>
+
+<ul>
+  <li><span class="code">GET /tickets</span> - Retrieves a list of tickets</li>
+  <li><span class="code">GET /tickets/12</span> - Retrieves a specific ticket</li>
+  <li><span class="code">POST /tickets</span> - Creates a new ticket</li>
+  <li><span class="code">PUT /tickets/12</span> - Updates ticket #12</li>
+  <li><span class="code">PATCH /tickets/12</span> - Partially updates ticket #12</li>
+  <li><span class="code">DELETE /tickets/12</span> - Deletes ticket #12</li>
+</ul>
+
+<p>The great thing about REST is that you're leveraging existing HTTP methods to implement significant functionality on just a single <span class="code">/tickets</span> endpoint. There are no method naming conventions to follow and the URL structure is clean &amp; clear. <em>REST FTW!</em></p>
+
+<p><strong>Should the endpoint name be singular or plural?</strong> The keep-it-simple rule applies here. Although your inner-grammatician will tell you it's wrong to describe a single instance of a resource using a plural, the pragmatic answer is to keep the URL format consistent and always use a plural. Not having to deal with odd pluralization (person/people, goose/geese) makes the life of the API consumer better and is easier for the API provider to implement (as most modern frameworks will natively handle <span class="code">/tickets</span> and <span class="code">/tickets/12</span> under a common controller).</p>
+
+<p><strong>But how do you deal with relations?</strong>  If a relation can only exist within another resource, RESTful principles provide useful guidance. Let's look at this with an example. A ticket in <a href="http://www.enchant.com">Enchant</a> consists of a number of messages.  These messages can be logically mapped to the <span class="code">/tickets</span> endpoint as follows:</p>
+
+<ul>
+  <li><span class="code">GET /tickets/12/messages</span> - Retrieves list of messages for ticket #12</li>
+  <li><span class="code">GET /tickets/12/messages/5</span> - Retrieves message #5 for ticket #12</li>
+  <li><span class="code">POST /tickets/12/messages</span> - Creates a new message in ticket #12</li>
+  <li><span class="code">PUT /tickets/12/messages/5</span> - Updates message #5 for ticket #12</li>
+  <li><span class="code">PATCH /tickets/12/messages/5</span> - Partially updates message #5 for ticket #12</li>
+  <li><span class="code">DELETE /tickets/12/messages/5</span> - Deletes message #5 for ticket #12</li>
+</ul>
+
+<p>Alternatively, if a relation can exist independently of the resource, it makes sense to just include an identifier for it within the output representation of the resource. The API consumer would then have to hit  the relation's endpoint.  However, if the relation is commonly requested alongside the resource, the API could offer functionality to automatically embed the relation's representation and avoid the second hit to the API.</p>
+
+<p><strong>What about actions that don't fit into the world of CRUD operations?</strong></p>
+
+<p>This is where things can get fuzzy. There are a number of approaches:</p>
+
+<ol>
+  <li>Restructure the action to appear like a field of a resource.  This works if the action doesn't take parameters.  For example an <em>activate</em> action could be mapped to a boolean <span class="code">activated</span> field and updated via a PATCH to the resource.</li>
+
+  <li>Treat it like a sub-resource with RESTful principles.  For example, GitHub's API lets you <a href="http://developer.github.com/v3/gists/#star-a-gist">star a gist</a> with <span class="code">PUT /gists/:id/star</span> and <a href="http://developer.github.com/v3/gists/#unstar-a-gist">unstar</a> with <span class="code">DELETE /gists/:id/star</span>.</li>
+
+  <li>Sometimes you really have no way to map the action to a sensible RESTful structure. For example, a multi-resource search doesn't really make sense to be applied to a specific resource's endpoint. In this case, <span class="code">/search</span> would make the most sense even though it isn't a resource.  This is OK - just do what's right from the perspective of the API consumer and make sure it's documented clearly to avoid confusion.</li>
+</ol>
+
+<h2 id="ssl">SSL everywhere - all the time</h2>
+
+<p>Always use SSL.  No exceptions.  Today, your web APIs can get accessed from anywhere there is internet (like libraries, coffee shops, airports among others).  Not all of these are secure. Many don't encrypt communications at all, allowing for easy eavesdropping or impersonation if authentication credentials are hijacked.</p>
+
+<p>Another advantage of always using SSL is that guaranteed encrypted communications simplifies authentication efforts - you can get away with simple access tokens instead of having to sign each API request.</p>
+
+<p>One thing to watch out for is non-SSL access to API URLs. Do <strong>not</strong> redirect these to their SSL counterparts. Throw a hard error instead!  The last thing you want is for poorly configured clients to send requests to an unencrypted endpoint, just to be silently redirected to the actual encrypted endpoint.</p>
+
+<h2 id="docs">Documentation</h2>
+
+<p>An API is only as good as its documentation. The docs should be easy to find and publically accessible. Most developers will check out the docs before attempting any integration effort.  When the docs are hidden inside a PDF file or require signing in, they're not only difficult to find but also not easy to search.<p>
+
+<p>The docs should show examples of complete request/response cycles. Preferably, the requests should be pastable examples - either links that can be pasted into a browser or curl examples that can be pasted into a terminal.  <a href="http://developer.github.com/v3/gists/#list-gists">GitHub</a> and <a href="https://stripe.com/docs/api">Stripe</a> do a great job with this.</p>
+
+<p>Once you release a public API, you've committed to not breaking things without notice.  The documentation must include any deprecation schedules and details surrounding externally visible API updates. Updates should be delivered via a blog (i.e. a changelog) or a mailing list (preferably both!).</p>
+
+<h2 id="versioning">Versioning</h2>
+
+<p>Always version your API. Versioning helps you iterate faster and prevents invalid requests from hitting updated endpoints. It also helps smooth over any major API version transitions as you can continue to offer old API versions for a period of time.</p>
+
+<p>There are mixed opinions around whether an <a href="http://stackoverflow.com/questions/389169/best-practices-for-api-versioning">API version should be included in the URL or in a header</a>. Academically speaking, it should probably be in a header.  However, the version needs to be in the URL to ensure browser explorability of the resources across versions (remember the API requirements specified at the top of this post?).</p>
+
+<p>I'm a big fan of the <a href="https://stripe.com/docs/api#versioning">approach that Stripe has taken to API versioning</a> - the URL has a major version number (v1), but the API has date based sub-versions which can be chosen using a custom HTTP request header.  In this case, the major version provides structural stability of the API as a whole while the sub-versions accounts for smaller changes (field deprecations, endpoint changes, etc).</p>
+
+<p>An API is never going to be completely stable.  Change is inevitable.  What's important is how that change is managed.  Well documented and announced multi-month deprecation schedules can be an acceptable practice for many APIs.  It comes down to what is reasonable given the industry and possible consumers of the API.</p>
+
+<h2 id="advanced-queries">Result filtering, sorting &amp; searching</h2>
+
+<p>It's best to keep the base resource URLs as lean as possible.  Complex result filters, sorting requirements and advanced searching (when restricted to a single type of resource) can all be easily implemented as query parameters on top of the base URL.  Let's look at these in more detail:</p>
+
+<p><strong>Filtering</strong>: Use a unique query parameter for each field that implements filtering.  For example, when requesting a list of tickets from the <span class="code">/tickets</span> endpoint, you may want to limit these to only those in the open state. This could be accomplished with a request like <span class="code">GET /tickets?state=open</span>.  Here, <span class="code">state</span> is a query parameter that implements a filter.</p>
+
+<p><strong>Sorting</strong>: Similar to filtering, a generic parameter <span class="code">sort</span> can be used to describe sorting rules. Accommodate complex sorting requirements by letting the sort parameter take in list of comma separated fields, each with a possible unary negative to imply descending sort order.  Let's look at some examples:</p>
+
+<ul>
+  <li><span class="code">GET /tickets?sort=-priority</span> - Retrieves a list of tickets in descending order of priority</li>
+  <li><span class="code">GET /tickets?sort=-priority,created_at</span> - Retrieves a list of tickets in descending order of priority.  Within a specific priority, older tickets are ordered first</li>
+</ul>
+
+<p><strong>Searching</strong>: Sometimes basic filters aren't enough and you need the power of full text search. Perhaps you're already using <a href="http://www.elasticsearch.org">ElasticSearch</a> or another <a href="http://lucene.apache.org">Lucene</a> based search technology. When full text search is used as a mechanism of retrieving resource instances for a specific type of resource, it can be exposed on the API as a query parameter on the resource's endpoint. Let's say <span class="code">q</span>.  Search queries should be passed straight to the search engine and API output should be in the same format as a normal list result.</p>
+
+<p>Combining these together, we can build queries like:</p>
+
+<ul>
+  <li><span class="code">GET /tickets?sort=-updated_at</span> - Retrieve recently updated tickets</li>
+  <li><span class="code">GET /tickets?state=closed&amp;sort=-updated_at</span> - Retrieve recently closed tickets</li>
+  <li><span class="code">GET /tickets?q=return&amp;state=open&amp;sort=-priority,created_at</span> - Retrieve the highest priority open tickets mentioning the word 'return'</li>
+</ul>
+
+<p><strong>Aliases for common queries</strong></p>
+
+<p>To make the API experience more pleasant for the average consumer, consider packaging up sets of conditions into easily accessible RESTful paths.  For example, the recently closed tickets query above could be packaged up as <span class="code">GET /tickets/recently_closed</span></p>
+
+
+<h2 id="limiting-fields">Limiting which fields are returned by the API</h2>
+
+<p>The API consumer doesn't always need the full representation of a resource. The ability select and chose returned fields goes a long way in letting the API consumer minimize network traffic and speed up their own usage of the API.</p>
+
+<p>Use a <span class="code">fields</span> query parameter that takes a comma separated list of fields to include. For example, the following request would retrieve just enough information to display a sorted listing of open tickets:</p>
+
+<p><span class="code">GET /tickets?fields=id,subject,customer_name,updated_at&amp;state=open&amp;sort=-updated_at</span></p>
+
+
+<h2 id="useful-post-responses">Updates &amp; creation should return a resource representation</h2>
+
+<p>A PUT, POST or PATCH call may make modifications to fields of the underlying resource that weren't part of the provided parameters (for example: created_at or updated_at timestamps). To prevent an API consumer from having to hit the API again for an updated representation, have the API return the updated (or created) representation as part of the response.</p>
+
+<p>In case of a POST that resulted in a creation, use a <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.5">HTTP 201 status code</a> and include a <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.30">Location header</a> that points to the URL of the new resource.</p>
+
+<h2 id="hateoas">Should you HATEOAS?</h2>
+
+<p>There are a lot of mixed opinions as to whether the API consumer should create links or whether links should be provided to the API. RESTful design principles specify <a href="https://blog.apigee.com/detail/hateoas_101_introduction_to_a_rest_api_style_video_slides">HATEOAS</a> which roughly states that interaction with an endpoint should be defined within metadata that comes with the output representation and not based on out-of-band information.</p>
+
+<p>Although the web generally works on HATEOAS type principles (where we go to a website's front page and follow links based on what we see on the page), I don't think we're ready for HATEOAS on APIs just yet.  When browsing a website, decisions on what links will be clicked are made at run time.  However, with an API, decisions as to what requests will be sent are made when the API integration code is written, not at run time. Could the decisions be deferred to run time? Sure, however, there isn't much to gain going down that route as code would still not be able to handle significant API changes without breaking. That said, I think HATEOAS is promising but not ready for prime time just yet.  Some more effort has to be put in to define standards and tooling around these principles for its potential to be fully realized.</p>
+
+<p>For now, it's best to assume the user has access to the documentation &amp; include resource identifiers in the output representation which the API consumer will use when crafting links. There are a couple of advantages of sticking to identifiers - data flowing over the network is minimized and the data stored by API consumers is also minimized (as they are storing small identifiers as opposed to URLs that contain identifiers).</p>
+
+<p>Also, given this post advocates version numbers in the URL, it makes more sense in the long term for the API consumer to store resource identifiers as opposed to URLs. After all, the identifier is stable across versions but the URL representing it is not!</p>
+
+
+<h2 id="json-responses">JSON only responses</h2>
+
+<p>It's time to leave XML behind in APIs. It's verbose, it's hard to parse, it's hard to read, its data model isn't compatible with how most programming languages model data and its extendibility advantages are irrelevant when your output representation's primary needs are serialization from an internal representation.</p>
+
+<p>I'm not going to put much effort into explaining the above breathful as it looks like others (<a href="http://apiblog.youtube.com/2012/12/the-simpler-yet-more-powerful-new.html">YouTube</a>, <a href="https://dev.twitter.com/docs/api/1.1/overview#JSON_support_only">Twitter</a> &amp; <a href="http://developers.blog.box.com/2012/12/14/v2_api/">Box</a>) have already started the XML exodus.</p>
+
+<p>I'll just leave you the following Google Trends chart (<a href="http://www.google.com/trends/explore?q=xml+api#q=xml%20api%2C%20json%20api&cmpt=q">XML API vs JSON API</a>) as food for thought:</p>
+
+<p class="block-image border-image">
+  <img style="max-width: 760px;" src="/images/201305-xml-vs-json-api.png"/>
+</p>
+
+<p>However, if your customer base consists of a large number of enterprise customers, you may find yourself having to support XML anyway.  If you must do this, you'll find yourself with a new question:<p>
+<p><strong>Should the media type change based on Accept headers or based on the URL?</strong>  To ensure browser explorability, it should be in the URL.  The most sensible option here would be to append a <span class="code">.json</span> or <span class="code">.xml</span> extension to the endpoint URL.</p>
+
+<h2 id="snake-vs-camel">snake_case vs camelCase for field names</h2>
+
+<p>If you're using JSON (<em>JavaScript</em> Object Notation) as your primary representation format, the "right" thing to do is to follow JavaScript naming conventions - and that means camelCase for field names! If you then go the route of building client libraries in  various languages, it's best to use idiomatic naming conventions in them - camelCase for C# &amp; Java, snake_case for python &amp; ruby.</p>
+
+<p>Food for thought: I've always felt that <a href="http://en.wikipedia.org/wiki/Snake_case">snake_case</a> is easier to read than JavaScript's convention of <a href="http://en.wikipedia.org/wiki/CamelCase">camelCase</a>.  I just didn't have any evidence to back up my gut feelings, until now. Based on an <a href="http://ieeexplore.ieee.org/xpl/articleDetails.jsp?tp=&arnumber=5521745">eye tracking study on camelCase and snake_case</a> (<a href="http://www.cs.kent.edu/~jmaletic/papers/ICPC2010-CamelCaseUnderScoreClouds.pdf">PDF</a>) from 2010, <strong>snake_case is 20% easier to read than camelCase</strong>! That impact on readability would affect API explorability and examples in documentation.</p>
+
+<p>Many popular JSON APIs use snake_case. I suspect this is due to serialization libraries following naming conventions of the underlying language they are using.  Perhaps we need to have JSON serialization libraries handle naming convention transformations.</p>
+
+<h2 id="pretty-print-gzip">Pretty print by default &amp; ensure gzip is supported</h2>
+
+<p>An API that provides white-space compressed output isn't very fun to look at from a browser. Although some sort of query parameter (like <span class="code">?pretty=true</span>) could be provided to enable pretty printing, an API that pretty prints by default is much more approachable. The cost of the extra data transfer is negligible, especially when you compare to the cost of not implementing gzip.</p>
+
+<p>Consider some use cases: What if an API consumer is debugging and has their code print out data it received from the API -  It will be readable by default. Or if the consumer grabbed the URL their code was generating and hit it directly from the browser - it will be readable by default. These are small things.  Small things that make an API pleasant to use!</p>
+
+<p><strong>But what about all the extra data transfer?</strong></p>
+
+<p>Let's look at this with a real world example.  I've pulled some <a href="https://api.github.com/users/veesahni">data from GitHub's API</a>, which uses pretty print by default.  I'll also be doing some gzip comparisons:</p>
+
+<pre><code class="language-bash">
+$ curl https://api.github.com/users/veesahni &gt; with-whitespace.txt
+$ ruby -r json -e 'puts JSON JSON.parse(STDIN.read)' &lt; with-whitespace.txt &gt; without-whitespace.txt
+$ gzip -c with-whitespace.txt &gt; with-whitespace.txt.gz
+$ gzip -c without-whitespace.txt &gt; without-whitespace.txt.gz
+</code></pre>
+
+<p>The output files have the following sizes:</p>
+
+<ul>
+  <li><span class="code">without-whitespace.txt</span> - 1252 bytes</li>
+  <li><span class="code">with-whitespace.txt</span> - 1369 bytes</li>
+  <li><span class="code">without-whitespace.txt.gz</span> - 496 bytes</li>
+  <li><span class="code">with-whitespace.txt.gz</span> - 509 bytes</li>
+</ul>
+
+<p>In this example, the whitespace increased the output size by 8.5% when gzip is not in play and 2.6% when gzip is in play.  On the other hand, the act of <strong>gzipping in itself provided over 60% in bandwidth savings</strong>. Since the cost of pretty printing is relatively small, it's best to pretty print by default and ensure gzip compression is supported!</p>
+
+<p>To further hammer in this point, Twitter found that there was an <a href="https://dev.twitter.com/blog/announcing-gzip-compression-streaming-apis">80% savings (in some cases)</a> when enabling gzip compression on their <a href="https://dev.twitter.com/docs/streaming-apis">Streaming API</a>.  Stack Exchange went as far as to <a href="https://api.stackexchange.com/docs/compression">never return a response that's not compressed</a>!</p>
+
+
+<h2 id="envelope">Don't use an envelope by default, but make it possible when needed</h2>
+
+<p>Many APIs wrap their responses in envelopes like this:</p>
+
+<pre><code class="language-json">
+{
+  "data" : {
+    "id" : 123,
+    "name" : "John"
+  }
+}
+</code></pre>
+
+<p>There are a couple of justifications for doing this - it makes it easy to include additional metadata or pagination information, some REST clients don't allow easy access to HTTP headers &amp; <a href="http://en.wikipedia.org/wiki/JSONP">JSONP</a> requests have no access to HTTP headers.  However, with standards that are being rapidly adopted like <a href="http://www.w3.org/TR/cors/">CORS</a> and the <a href="http://tools.ietf.org/html/rfc5988#page-6">Link header from RFC 5988</a>, enveloping is starting to become unnecessary.</p>
+
+<p>We can future proof the API by staying envelope free by default and enveloping only in exceptional cases.</p>
+
+<p><strong>How should an envelope be used in the exceptional cases?</strong></p>
+
+<p>There are 2 situations where an envelope is really needed - if the API needs to support cross domain requests over JSONP or if the client is incapable of working with HTTP headers.</p>
+
+<p>JSONP requests come with an additional query parameter (usually named <span class="code">callback</span> or <span class="code">jsonp</span>) representing the name of the callback function. If this parameter is present, the API should switch to a full envelope mode where it always responds with a 200 HTTP status code and passes the real status code in the JSON payload.  Any additional HTTP headers that would have been passed alongside the response should be mapped to JSON fields, like so:</p>
+
+<pre><code class="language-javascript">
+callback_function({
+  status_code: 200,
+  next_page: "https://..",
+  response: {
+    ... actual JSON response body ... 
+  }
+})
+</code></pre>
+
+<p>Similarly, to support limited HTTP clients, allow for a special query parameter <span class="code">?envelope=true</span> that would trigger full enveloping (without the JSONP callback function).</p>
+
+<h2 id="json-requests">JSON encoded POST, PUT &amp; PATCH bodies</h2>
+
+<p>If you're following the approach in this post, then you've embraced JSON for all API output. Let's consider JSON for API input.</p>
+
+<p>Many APIs use URL encoding in their API request bodies.  URL encoding is exactly what it sounds like - request bodies where key value pairs are encoded using the same conventions as one would use to encode data in URL query parameters. This is simple, widely supported and gets the job done.</p>
+
+<p>However, URL encoding has a few issues that make it problematic. It has no concept of data types. This forces the API to parse integers and booleans out of strings.  Furthermore, it has no real concept of hierarchical structure. Although there are some conventions that can build some structure out of key value pairs (like appending  [ ] to a key to represent an array), this is no comparison to the native hierarchical structure of JSON.</p>
+
+<p>If the API is simple, URL encoding may suffice.  However, complex APIs should stick to JSON for their API input.  Either way, pick one and be consistent throughout the API.</p>
+
+<p>An API that accepts JSON encoded POST, PUT &amp; PATCH requests should also require the <span class="code">Content-Type</span> header be set to <span class="code">application/json</span> or throw a 415 Unsupported Media Type HTTP status code.</p>
+
+
+<h2 id="pagination">Pagination</h2>
+
+<p>Envelope loving APIs typically include pagination data in the envelope itself.  And I don't blame them - until recently, there weren't many better options.  The right way to include pagination details today is using the <a href="http://tools.ietf.org/html/rfc5988#page-6">Link header introduced by RFC 5988</a>.</p>
+
+<p>An API that uses the Link header can return a set of ready-made links so the API consumer doesn't have to construct links themselves. This is especially important when pagination is <a href="https://developers.facebook.com/docs/reference/api/pagination/">cursor based</a>. Here is an example of a Link header used properly, grabbed from <a href="http://developer.github.com/v3/#pagination">GitHub</a>'s documentation:</p>
+
+<pre><code class="language-http">
+Link: &lt;https://api.github.com/user/repos?page=3&amp;per_page=100&gt;; rel="next", &lt;https://api.github.com/user/repos?page=50&amp;per_page=100&gt;; rel="last"
+</code></pre>
+
+<p>But this isn't a complete solution as many APIs do like to return the additional pagination information, like a count of the total number of available results.  An API that requires sending a count can use a custom HTTP header like <span class="code">X-Total-Count</span>.</p>
+
+<h2 id="autoloading">Auto loading related resource representations</h2>
+
+<p>There are many cases where an API consumer needs to load data related to (or referenced) from the resource being requested.  Rather than requiring the consumer to hit the API repeatedly for this information, there would be a significant efficiency gain from allowing related data to be returned and loaded alongside the original resource on demand.</p>
+
+<p>However, as this does <a href="http://idbentley.com/blog/2013/03/14/should-restful-apis-include-relationships/">go against some RESTful principles</a>, we can minimize our deviation by only doing so based on an <span class="code">embed</span> (or <span class="code">expand</span>) query parameter.</p>
+
+<p>In this case, <span class="code">embed</span> would be a comma separated list of fields to be embedded.  Dot-notation could be used to refer to sub-fields.  For example:</p>
+
+<p><span class="code">GET /tickets/12?embed=customer.name,assigned_user</span></p>
+
+<p>This would return a ticket with additional details embedded, like:</p>
+
+<pre><code class="language-json">
+{
+  "id" : 12,
+  "subject" : "I have a question!",
+  "summary" : "Hi, ....",
+  "customer" : {
+    "name" : "Bob"
+  },
+  assigned_user: {
+   "id" : 42,
+   "name" : "Jim",
+  }
+}
+</code></pre>
+
+<p>Of course, ability to implement something like this really depends on internal complexity.  This kind of embedding can easily result in an <a href="http://stackoverflow.com/questions/97197/what-is-the-n1-selects-issue">N+1 select issue</a>.</p>
+
+<h2 id="method-override">Overriding the HTTP method</h2>
+
+<p>Some HTTP clients can only work with simple GET and POST requests.  To increase accessibility to these limited clients, the API needs a way to override the HTTP method. Although there aren't any hard standards here, the popular convention is to accept a request header <span class="code">X-HTTP-Method-Override</span> with a string value containing one of PUT, PATCH or DELETE.</p>
+
+<p>Note that the override header should <strong>only</strong> be accepted on POST requests. GET requests should never <a href="http://programmers.stackexchange.com/questions/188860/why-shouldnt-a-get-request-change-data-on-the-server">change data on the server</a>!</p>
+
+<h2 id="rate-limiting">Rate limiting</h2>
+
+<p>To prevent abuse, it is standard practice to add some sort of rate limiting to an API.  <a href="http://tools.ietf.org/html/rfc6585">RFC 6585</a> introduced a HTTP status code <a href="http://tools.ietf.org/html/rfc6585#section-4">429 Too Many Requests</a> to accommodate this.</p>
+
+<p>However, it can be very useful to notify the consumer of their limits before they actually hit it.  This is an area that currently lacks standards but has a number of <a href="http://stackoverflow.com/questions/16022624/examples-of-http-api-rate-limiting-http-response-headers">popular conventions using HTTP response headers</a>.</p>
+
+<p>At a minimum, include the following headers (using Twitter's <a href="https://dev.twitter.com/docs/rate-limiting/1.1">naming conventions</a> as headers typically don't have mid-word capitalization):</p>
+
+<ul>
+  <li><span class="code">X-Rate-Limit-Limit</span> - The number of allowed requests in the current period</li>
+  <li><span class="code">X-Rate-Limit-Remaining</span> - The number of remaining requests in the current period</li>
+  <li><span class="code">X-Rate-Limit-Reset</span> - The number of seconds left in the current period</li>
+</ul>
+
+<p><strong>Why is number of seconds left being used instead of a time stamp for X-Rate-Limit-Reset?</strong></p>
+
+<p>A timestamp contains all sorts of useful but unnecessary information like the date and possibly the time-zone.  An API consumer really just wants to know when they can send the request again &amp; the number of seconds answers this question with minimal additional processing on their end.  It also avoids issues related to <a href="http://en.wikipedia.org/wiki/Clock_skew">clock skew</a>.</p>
+
+<p>Some APIs use a UNIX timestamp (seconds since epoch) for X-Rate-Limit-Reset.  Don't do this!</p>
+
+<p><strong>Why is it bad practice to use a UNIX timestamp for X-Rate-Limit-Reset?</strong></p>
+
+<p>The <a href="http://www.w3.org/Protocols/rfc2616/rfc2616.txt">HTTP spec</a> already <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3">specifies</a> using <a href="http://www.ietf.org/rfc/rfc1123.txt">RFC 1123 date formats</a> (currently being used in <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.18">Date</a>, <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.25">If-Modified-Since</a> &amp; <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.29">Last-Modified</a> HTTP headers).  If we were to specify a new HTTP header that takes a timestamp of some sort, it should follow RFC 1123 conventions instead of using UNIX timestamps.</p>
+
+<h2 id="authentication">Authentication</h2>
+
+<p>A RESTful API should be stateless.  This means that request authentication should not depend on cookies or sessions.  Instead, each request should come with some sort authentication credentials.</p>
+
+<p>By always using SSL, the authentication credentials can be simplified to a randomly generated access token that is delivered in the user name field of HTTP Basic Auth.  The great thing about this is that it's completely browser explorable - the browser will just popup a prompt asking for credentials if it receives a <span class="code">401 Unauthorized</span> status code from the server.</p>
+
+<p>However, this token-over-basic-auth method of authentication is only acceptable in cases where it's practical to have the user copy a token from an administration interface to the API consumer environment. In cases where this isn't possible, <a href="http://oauth.net/2/">OAuth 2</a> should be used to provide secure token transfer to a third party. OAuth 2 uses <a href="http://tools.ietf.org/html/rfc6750">Bearer tokens</a> &amp; also depends on SSL for its underlying transport encryption.</p>
+
+<p>An API that needs to support JSONP will need a third method of authentication, as JSONP requests cannot send HTTP Basic Auth credentials or Bearer tokens. In this case, a special query parameter <span class="code">access_token</span> can be used. Note: there is an inherent security issue in using a query parameter for the token as most web servers store query parameters in server logs.</p>
+
+<p>For what it's worth, all three methods above are just ways to transport the token across the API boundary.  The actual underlying token itself could be identical.</p>
+
+<h2 id="caching">Caching</h2>
+
+<p>HTTP provides a built-in caching framework! All you have to do is include some additional outbound response headers and do a little validation when you receive some inbound request headers.</p>
+
+<p>There are 2 approaches: <a href="http://en.wikipedia.org/wiki/HTTP_ETag">ETag</a> and <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.29">Last-Modified</a></p>
+
+<p><strong>ETag</strong>: When generating a response, include a HTTP header ETag containing a hash or checksum of the representation.  This value should change whenever the output representation changes. Now, if an inbound HTTP requests contains a <span class="code">If-None-Match</span> header with a matching ETag value, the API should return a <span class="code">304 Not Modified</span> status code instead of the output representation of the resource.</p>
+
+<p><strong>Last-Modified</strong>: This basically works like to ETag, except that it uses timestamps. The response header <span class="code">Last-Modified</span> contains a timestamp in <a href="http://www.ietf.org/rfc/rfc1123.txt">RFC 1123</a> format which is validated against <span class="code">If-Modified-Since</span>.  Note that the HTTP spec has had <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3">3 different acceptable date formats</a> and the server should be prepared to accept any one of them.</p>
+
+<h2 id="errors">Errors</h2>
+
+<p>Just like an HTML error page shows a useful error message to a visitor, an API should provide a useful error message in a known consumable format. The representation of an error should be no different than the representation of any resource, just with its own set of fields.</p>
+
+<p>The API should always return sensible HTTP status codes.  API errors typically break down into 2 types: 400 series status codes for client issues &amp; 500 series status codes for server issues. At a minimum, the API should standardize that all 400 series errors come with consumable JSON error representation.  If possible (i.e. if load balancers &amp; reverse proxies can create custom error bodies), this should extend to 500 series status codes.</p>
+
+<p>A JSON error body should provide a few things for the developer - a useful error message, a unique error code (that can be looked up for more details in the docs) and possibly a detailed description.  JSON output representation for something like this would look like:</p>
+
+<pre><code class="language-json">
+{
+  "code" : 1234,
+  "message" : "Something bad happened :(",
+  "description" : "More details about the error here"
+}
+</code></pre>
+
+<p>Validation errors for PUT, PATCH and POST requests will need a field breakdown. This is best modeled by using a fixed top-level error code for validation failures and providing the detailed errors in an additional <span class="code">errors</span> field, like so:</p>
+
+<pre><code class="language-json">
+{
+  "code" : 1024,
+  "message" : "Validation Failed",
+  "errors" : [
+    {
+      "code" : 5432,
+      "field" : "first_name",
+      "message" : "First name cannot have fancy characters"
+    },
+    {
+       "code" : 5622,
+       "field" : "password",
+       "message" : "Password cannot be blank"
+    }
+  ]
+}
+</code></pre>
+
+<h2 id="http-status">HTTP status codes</h2>
+
+<p>HTTP defines a bunch of <a href="http://en.wikipedia.org/wiki/List_of_HTTP_status_codes">meaningful status codes</a> that can be returned from your API.  These can be leveraged to help the API consumers route their responses accordingly. I've curated a short list of the ones that you definitely should be using:</p>
+
+<ul>
+  <li><span class="code">200 OK</span> - Response to a successful GET, PUT, PATCH or DELETE. Can also be used for a POST that doesn't result in a creation.</li>
+  <li><span class="code">201 Created</span> - Response to a POST that results in a creation.  Should be combined with a <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.30">Location header</a> pointing to the location of the new resource</li>
+  <li><span class="code">204 No Content</span> - Response to a successful request that won't be returning a body (like a DELETE request)</li>
+  <li><span class="code">304 Not Modified</span> - Used when HTTP caching headers are in play</li>
+  <li><span class="code">400 Bad Request</span> - The request is malformed, such as if the body does not parse</li>
+  <li><span class="code">401 Unauthorized</span> - When no or invalid authentication details are provided.  Also useful to trigger an auth popup if the API is used from a browser</li>
+  <li><span class="code">403 Forbidden</span> - When authentication succeeded but authenticated user doesn't have access to the resource</li>
+  <li><span class="code">404 Not Found</span> - When a non-existent resource is requested</li>
+  <li><span class="code">405 Method Not Allowed</span> - When an HTTP method is being requested that isn't allowed for the authenticated user</li>
+  <li><span class="code">410 Gone</span> - Indicates that the resource at this end point is no longer available. Useful as a blanket response for old API versions</li>
+  <li><span class="code">415 Unsupported Media Type</span> - If incorrect content type was provided as part of the request</li>
+  <li><span class="code">422 Unprocessable Entity</span> - Used for validation errors</li>
+  <li><span class="code">429 Too Many Requests</span> - When a request is rejected due to rate limiting</li>
+</ul>
+
+<h2 id="summary">In Summary</h2>
+
+<p>An API is a user interface for developers. Put the effort in to ensure it's not just functional but pleasant to use.</p>
+
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+  <div class="cta" id="signup-for-updates">
+    <div class="inner">
+      <p class="message">
+        Developers from Spotify, IBM and eBay already follow this blog.<br>You should too.
+      </p>
+
+      <div>
+        <form action="https://vinaysahni.us6.list-manage.com/subscribe/post?u=005ede9b44df2622ce536ab88&amp;id=8edc074683" method="post" target="_blank">
+          <!-- <input type="text" name="FNAME" placeholder="First Name"> -->
+          <input type="text" name="EMAIL" placeholder="Email Address">
+          <input type="submit" value="Subscribe">
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="scrollbox">
+  <a href="#" class="close">x</a>
+  <div class="message">
+    <p>Developers from Spotify, IBM and eBay already follow this blog.<br>You should too.</p>
+  </div>
+  <form action="https://vinaysahni.us6.list-manage.com/subscribe/post?u=005ede9b44df2622ce536ab88&amp;id=8edc074683" method="post" target="_blank">
+    <!-- <input type="text" name="FNAME" placeholder="First Name"> -->
+    <input type="text" name="EMAIL" placeholder="Email Address">
+    <input type="submit" value="Subscribe">
+  </form>
+</div>
+
+  </div>
+
+  <div class="footer">&copy; Vinay Sahni</div>
+</div>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-40659386-1', 'vinaysahni.com');
+  ga('send', 'pageview');
+
+</script>
+
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/js-cookie/2.1.2/js.cookie.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script src="/assets/script.js?N3324LJJkm123"></script>
+
+</body>
+</html>

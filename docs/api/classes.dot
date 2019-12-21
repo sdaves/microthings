@@ -1,0 +1,20 @@
+digraph "classes" {
+charset="utf-8"
+rankdir=BT
+"0" [label="{mything.api.Bill|\l|pay()\l}", shape="record"];
+"1" [label="{mything.api.ConsoleAccount|\l|iter_bills()\lmail_insufficent_payment(msg)\lpay_all_bills()\l}", shape="record"];
+"2" [label="{mything.api.ConsoleMailer|\l|send(msg)\l}", shape="record"];
+"3" [label="{mything.api.FreePayment|\l|charge(amount)\l}", shape="record"];
+"4" [label="{mything.apiblueprint.c|\l|}", shape="record"];
+"5" [label="{mything.domain.IAccount|\l|iter_bills()\lpay_all_bills()\l}", shape="record"];
+"6" [label="{mything.domain.IBill|\l|pay()\l}", shape="record"];
+"7" [label="{mything.domain.IMailer|\l|send(msg)\l}", shape="record"];
+"8" [label="{mything.domain.IPayment|\l|charge(amount)\l}", shape="record"];
+"9" [label="{mything.feature.EnvBackend|\l|exists(name)\lis_active(name)\l}", shape="record"];
+"10" [label="{mything.feature.Feature|backend\llogger\l|}", shape="record"];
+"11" [label="{mything.feature.Logger|\l|debug()\lerror()\llevel()\lwarn()\l}", shape="record"];
+"0" -> "6" [arrowhead="empty", arrowtail="none"];
+"1" -> "5" [arrowhead="empty", arrowtail="none"];
+"2" -> "7" [arrowhead="empty", arrowtail="none"];
+"3" -> "8" [arrowhead="empty", arrowtail="none"];
+}

@@ -1,0 +1,207 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module mything.api</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="mything.html"><font color="#ffffff">mything</font></a>.api</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/tv/Documents/abc/mything/mything/api.py">/home/tv/Documents/abc/mything/mything/api.py</a></font></td></tr></table>
+    <p><tt>Application&nbsp;Services&nbsp;(api)<br>
+&nbsp;<br>
+&nbsp;-&nbsp;Zero&nbsp;Domain&nbsp;Business&nbsp;Logic<br>
+&nbsp;-&nbsp;Mostly&nbsp;I/O&nbsp;Services<br>
+&nbsp;-&nbsp;Use&nbsp;Case&nbsp;Backing&nbsp;Services</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="mything.domain.html">mything.domain</a><br>
+</td><td width="25%" valign=top><a href="itertools.html">itertools</a><br>
+</td><td width="25%" valign=top><a href="mything.model.html">mything.model</a><br>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="mything.domain.html#IAccount">mything.domain.IAccount</a>(<a href="builtins.html#object">builtins.object</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="mything.api.html#ConsoleAccount">ConsoleAccount</a>
+</font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="mything.domain.html#IBill">mything.domain.IBill</a>(<a href="builtins.html#object">builtins.object</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="mything.api.html#Bill">Bill</a>
+</font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="mything.domain.html#IMailer">mything.domain.IMailer</a>(<a href="builtins.html#object">builtins.object</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="mything.api.html#ConsoleMailer">ConsoleMailer</a>
+</font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="mything.domain.html#IPayment">mything.domain.IPayment</a>(<a href="builtins.html#object">builtins.object</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="mything.api.html#FreePayment">FreePayment</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Bill">class <strong>Bill</strong></a>(<a href="mything.domain.html#IBill">mything.domain.IBill</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Bill">Bill</a>(amount:&nbsp;float,&nbsp;payment:&nbsp;mything.domain.<a href="mything.domain.html#IPayment">IPayment</a>)<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="mything.api.html#Bill">Bill</a></dd>
+<dd><a href="mything.domain.html#IBill">mything.domain.IBill</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="Bill-__init__"><strong>__init__</strong></a>(self, amount: float, payment: mything.domain.IPayment)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="Bill-pay"><strong>pay</strong></a>(self) -&gt; Union[NoneType, Exception]</dt><dd><tt>Pay&nbsp;bill&nbsp;using&nbsp;payment.<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;b&nbsp;=&nbsp;<a href="#Bill">Bill</a>(10.0,&nbsp;None)<br>
+&gt;&gt;&gt;&nbsp;assert&nbsp;isinstance(b.<a href="#Bill-pay">pay</a>(),&nbsp;Exception)<br>
+&gt;&gt;&gt;&nbsp;p&nbsp;=&nbsp;<a href="#FreePayment">FreePayment</a>()<br>
+&gt;&gt;&gt;&nbsp;b&nbsp;=&nbsp;<a href="#Bill">Bill</a>(10.0,&nbsp;p)<br>
+&gt;&gt;&gt;&nbsp;b.<a href="#Bill-pay">pay</a>()<br>
+&gt;&gt;&gt;&nbsp;assert&nbsp;p._charged&nbsp;==&nbsp;10.0</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="mything.domain.html#IBill">mything.domain.IBill</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="ConsoleAccount">class <strong>ConsoleAccount</strong></a>(<a href="mything.domain.html#IAccount">mything.domain.IAccount</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#ConsoleAccount">ConsoleAccount</a>(mailer:&nbsp;mything.domain.<a href="mything.domain.html#IMailer">IMailer</a>,&nbsp;payment:&nbsp;mything.domain.<a href="mything.domain.html#IPayment">IPayment</a>)<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="mything.api.html#ConsoleAccount">ConsoleAccount</a></dd>
+<dd><a href="mything.domain.html#IAccount">mything.domain.IAccount</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="ConsoleAccount-__init__"><strong>__init__</strong></a>(self, mailer: mything.domain.IMailer, payment: mything.domain.IPayment)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="ConsoleAccount-iter_bills"><strong>iter_bills</strong></a>(self) -&gt; Iterator[Union[mything.domain.IBill, Exception]]</dt><dd><tt>Get&nbsp;Iterater&nbsp;of&nbsp;bills&nbsp;with&nbsp;either&nbsp;<a href="#Bill">Bill</a>&nbsp;or&nbsp;Exception&nbsp;type&nbsp;results.<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;a&nbsp;=&nbsp;<a href="#ConsoleAccount">ConsoleAccount</a>(None,&nbsp;None)<br>
+&gt;&gt;&gt;&nbsp;bills&nbsp;=&nbsp;a.<a href="#ConsoleAccount-iter_bills">iter_bills</a>()<br>
+&gt;&gt;&gt;&nbsp;b&nbsp;=&nbsp;next(bills)<br>
+&gt;&gt;&gt;&nbsp;assert&nbsp;isinstance(b.pay(),&nbsp;Exception)<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;p&nbsp;=&nbsp;<a href="#FreePayment">FreePayment</a>()<br>
+&gt;&gt;&gt;&nbsp;a&nbsp;=&nbsp;<a href="#ConsoleAccount">ConsoleAccount</a>(None,&nbsp;p)<br>
+&gt;&gt;&gt;&nbsp;bills&nbsp;=&nbsp;a.<a href="#ConsoleAccount-iter_bills">iter_bills</a>()<br>
+&gt;&gt;&gt;&nbsp;b&nbsp;=&nbsp;next(bills)<br>
+&gt;&gt;&gt;&nbsp;b.pay()<br>
+&gt;&gt;&gt;&nbsp;assert&nbsp;p._charged&nbsp;==&nbsp;b._amount</tt></dd></dl>
+
+<dl><dt><a name="ConsoleAccount-mail_insufficent_payment"><strong>mail_insufficent_payment</strong></a>(self, msg: str) -&gt; Union[NoneType, Exception]</dt></dl>
+
+<dl><dt><a name="ConsoleAccount-pay_all_bills"><strong>pay_all_bills</strong></a>(self) -&gt; Union[NoneType, Exception]</dt><dd><tt>Pay&nbsp;all&nbsp;bills&nbsp;using&nbsp;payment.<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;a&nbsp;=&nbsp;<a href="#ConsoleAccount">ConsoleAccount</a>(None,&nbsp;None)<br>
+&gt;&gt;&gt;&nbsp;assert&nbsp;isinstance(a.<a href="#ConsoleAccount-pay_all_bills">pay_all_bills</a>(),&nbsp;Exception)<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;p&nbsp;=&nbsp;<a href="#FreePayment">FreePayment</a>()<br>
+&gt;&gt;&gt;&nbsp;a&nbsp;=&nbsp;<a href="#ConsoleAccount">ConsoleAccount</a>(None,&nbsp;p)<br>
+&gt;&gt;&gt;&nbsp;a.<a href="#ConsoleAccount-pay_all_bills">pay_all_bills</a>()</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="mything.domain.html#IAccount">mything.domain.IAccount</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="ConsoleMailer">class <strong>ConsoleMailer</strong></a>(<a href="mything.domain.html#IMailer">mything.domain.IMailer</a>)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="mything.api.html#ConsoleMailer">ConsoleMailer</a></dd>
+<dd><a href="mything.domain.html#IMailer">mything.domain.IMailer</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="ConsoleMailer-send"><strong>send</strong></a>(self, msg: str) -&gt; Union[NoneType, Exception]</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="mything.domain.html#IMailer">mything.domain.IMailer</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="FreePayment">class <strong>FreePayment</strong></a>(<a href="mything.domain.html#IPayment">mything.domain.IPayment</a>)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="mything.api.html#FreePayment">FreePayment</a></dd>
+<dd><a href="mything.domain.html#IPayment">mything.domain.IPayment</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="FreePayment-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="FreePayment-charge"><strong>charge</strong></a>(self, amount: float) -&gt; Union[NoneType, Exception]</dt><dd><tt>Charge&nbsp;ammount&nbsp;to&nbsp;account.<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;p&nbsp;=&nbsp;<a href="#FreePayment">FreePayment</a>()<br>
+&gt;&gt;&gt;&nbsp;p.<a href="#FreePayment-charge">charge</a>(1.0)<br>
+&gt;&gt;&gt;&nbsp;p.<a href="#FreePayment-charge">charge</a>(2.2)<br>
+&gt;&gt;&gt;&nbsp;assert&nbsp;isinstance(p.<a href="#FreePayment-charge">charge</a>('l'),&nbsp;Exception)<br>
+&gt;&gt;&gt;&nbsp;assert&nbsp;p._charged&nbsp;==&nbsp;3.2</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="mything.domain.html#IPayment">mything.domain.IPayment</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table>
+</body></html>
