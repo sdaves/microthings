@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "mything"
-version = "0.3.0"
-description = ""
+version = "0.3.1"
+description = "Pure Python Domain Driven Design microfrontends. Create standard wsgi microservices for your Domain, and HTML5 microfrontends by generating ES6! https://mything.netlify.com"
 authors = ["Stephen Daves <contact@stephendaves.com>"]
 
 [tool.poetry.dependencies]

@@ -4,7 +4,7 @@ Pure Python Domain Driven Design microfrontends. Create standard wsgi microservi
 
 ## Badges
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/03fcd31b-aad4-4cbb-82d0-f50e5b1b0574/deploy-status)](https://app.netlify.com/sites/mything/deploys)
+Status: [![Netlify Status](https://api.netlify.com/api/v1/badges/03fcd31b-aad4-4cbb-82d0-f50e5b1b0574/deploy-status)](https://app.netlify.com/sites/mything/deploys)
 
 [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/sdaves/mything)
 
@@ -38,7 +38,7 @@ Pure Python Domain Driven Design microfrontends. Create standard wsgi microservi
     # or
     
     # without system make
-    python3 -m pip install --user py-make
+    python3 -m pip install py-make
     python3 -m pymake setup
 
 ## Build
