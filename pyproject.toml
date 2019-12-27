@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "mything"
-version = "0.3.1"
-description = "Pure Python Domain Driven Design microfrontends. Create standard wsgi microservices for your Domain, and HTML5 microfrontends by generating ES6! https://mything.netlify.com"
+version = "0.3.2"
+description = "Microfrontends and Microservices with 100% Pure Python and Domain Driven Design . Flask for your processes with SPA HTML5 static js interfaces using generated ES6 modules. https://microthings.netlify.com/"
 authors = ["Stephen Daves <contact@stephendaves.com>"]
 
 [tool.poetry.dependencies]
