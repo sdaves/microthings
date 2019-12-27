@@ -24,7 +24,7 @@ function TodosForm({page='Home', inputKeyDown=()=>null, todos=[], addTodo=()=>nu
         <${Header} name="ToDo's (${page})" />
         <${Input} ref=${el => this.input = el.base} inputKeyDown=${inputKeyDown}></>
         <${TodoList} todos=${todos}></>
-        <button onClick=${addTodo}>Add Todo</button>
+        <button class="pure-button pure-button-primary" onClick=${addTodo}>Add Todo</button>
         <${Footer}>footer content here</>
       </div>
     `;
