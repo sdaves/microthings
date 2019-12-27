@@ -71,7 +71,7 @@ def b():
     """
 
 
-class c():
+class c:
     """Group Question 2
     ## Questions Collection [/questions{?page}]
 

@@ -1,64 +1,46 @@
-PYTHON=python3
-POETRY_BIN=~/.poetry/bin/poetry
-
-# detect if windows shell is used
-ifeq ($(findstring cmd.exe,$(SHELL)),cmd.exe)
-$(info "using Windows shell cmd.exe")
-DEVNUL := NUL
-WHICH := where
-else
-DEVNUL := /dev/null
-WHICH := which
-endif
-
-# if no python3 found, revert to generic system python
-ifeq ($(shell ${WHICH} python3),)
-PYTHON=python
-endif
-
-# if no poetry found, install it
-ifeq ($(shell ${WHICH} ${POETRY_BIN}),)
-$(info "no poetry found, please wait 30 seconds while installing ...")
-ifeq ($(shell ${PYTHON} ./scripts/get-poetry.py -y 2> ${DEVNUL}),)
-$(info "poetry installed")
-endif
-endif
-
-POETRY=$(PYTHON) $(POETRY_BIN)
-
-default: install black doc build generatejs test aa
+.PHONY: aa doc help install black build generatejs help tdd test setup
+default:
+	python3 -m pymake install
+	python3 -m pymake black
+	python3 -m pymake doc
+	python3 -m pymake build
+	python3 -m pymake generatejs
+	python3 -m pymake aa
 
 aa: ## Make some aa (lava) to celebrate
 	@echo '🌋 Success 🌋'
 
 doc: ## Build docs
-	$(POETRY) run pydoc3 -w mything.api mything.domain mything.model mything.factory mything.feature mything builtins 
-	mv *.html docs/api/
-	$(POETRY) run pyreverse mything -SA -m y
-	mv *.dot docs/api/
-	$(PYTHON) ./scripts/pyapb.py  -w mything/apiblueprint.py --host https://mything.apiblueprint.org/
-	mv apiblueprint.md docs/api/
+	python3 -m poetry run pydoc3 -w mything.api mything.domain mything.model mything.factory mything.feature mything builtins
+	python3 -m poetry run pyreverse mything -SA -m y
+	python3 ./scripts/pyapb.py  -w mything/apiblueprint.py --host https://mything.apiblueprint.org/
+	python3 -c "print('moving generated files to docs/api/');import shutil;import os;files = os.listdir(); match = lambda file: file.endswith('.html') or file.endswith('.dot') or file.endswith('blueprint.md'); move = lambda file: (os.path.exists('docs/api/'+file) and os.remove('docs/api/'+file)) or shutil.move(file, 'docs/api/'); list(map(move,filter(match, files)))"
 
 help: ## Show this help message.
-	@## https://gist.github.com/prwhite/8168133#gistcomment-1716694
-	@echo -e "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\1:\2/' | column -c2 -t -s :)" | sort
+	python3 -c "lines = list(open('Makefile')); match = lambda line: '##' in line; list(map(print,filter(match,lines)))"
+
+setup: ## Install pyenv and poetry to home folder"
+	python3 ./scripts/get-pip.py
+	python3 ./scripts/get-poetry.py
+	python3 -m pip install setuptools py-make poetry
 
 install: ## Install packages for project
-	$(POETRY) install || echo skipping install
+	python3 -m poetry install
 
 black: ## Format py files
-	$(POETRY) run black
+	python3 -m poetry run black mything
 
 build: ## Build pypi package
-	$(POETRY) build
+	python3 -m poetry build
 
 generatejs: ## Build javascript
-	$(POETRY) run transcrypt -da -sf -de -m -n -b -ds -dc mything
-	cp __target__/*.js docs/api/js/
+	python3 -m poetry run transcrypt -da -sf -de -m -n -b -ds -dc mything
+	python3 -c "print('moving generated js to docs/api/js/');import shutil;import os;os.chdir('__target__');files = os.listdir(); match = lambda file: file.endswith('.js'); move = lambda file: (os.path.exists('../docs/api/js/'+file) and os.remove('../docs/api/js/'+file)) or shutil.move(file, '../docs/api/js/'); list(map(move,filter(match, files)))"
 
 tdd: ## Run tests on file change
-	$(POETRY) run ptw 
+	python3 -m poetry run ptw
 
-test: ## Run the tests 
-	$(POETRY) run pytest && $(POETRY) run pytest --doctest-only mything
+test: ## Run the tests
+	python3 -m poetry run pytest
+	python3 -m poetry run pytest --doctest-only mything
 

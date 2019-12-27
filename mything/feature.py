@@ -192,6 +192,7 @@ class EnvBackend:
     '''
     Environment variable based backend
     '''
+
     def exists(self, name):
         return True
 

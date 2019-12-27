@@ -41,13 +41,5 @@ pip-wheel-metadata
 /poetry.toml
 
 __target__
-docs/api/js/**
-A
-B
-B
-B
-B
-A
-C
-C
+docs/api/js
 docs/api/js/**

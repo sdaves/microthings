@@ -10,6 +10,7 @@ import itertools
 import mything.model as m
 import mything.domain as d
 
+
 class ConsoleMailer(d.IMailer):
     def send(self, msg: str) -> m.Res[None]:
         print(msg)
