@@ -1,7 +1,6 @@
 # microthings
 
-Microfrontends and Microservices with 100% Pure Python and Domain Driven Design . Flask for your processes with SPA HTML5 static js interfaces using generated ES6 modules. 
-
+Microservices and Microfrontends with 100% Pure Python and Domain Driven Design. Serverless Bottle.py for your stateless processes and a Preact client UI packaged as WebComponents using transcrypt.
 https://microthings.netlify.com/
 
 ## Badges
@@ -10,26 +9,61 @@ Status: [![Netlify Status](https://api.netlify.com/api/v1/badges/03fcd31b-aad4-4
 
 [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/sdaves/mything)
 
-# Layered Architecture
+## Simple Microfrontend (Client)
+
+```python
+from mything.microfrontends.core import IFrontend, define
+
+@define
+class HelloFrontend(IFrontend):    
+    def __init__(self, html):
+        super().__init__(html, 'mything-hello', ['name'], lambda x: self.mount(x))
+
+    def render(self, props={'name':'Guest'}):
+        return self._html.h('span', {}, 'Hello {0}!'.format(props['name']))
+```
+
+Transcrypt compiles this to `hello.js` and it can be included as a js module in the browser or nodejs.
+
+## Simple Microservice (Front Controller)
+
+```python
+class Hello:
+    def __init__(self, app):
+        super().__init__()
+        app.route('/hello')(self.hello)
+        
+    def hello(self):
+        return 'Hello!'
+
+if __name__ == '__main__':
+    import bottle
+    app = bottle.Bottle()
+    Hello(app)
+    app.run()
+```
+
+This microservice depends on only 1 external file to run: [bottle.py](scripts/bottle.py).
+You can copy that file too when deploying, or just `pip install bottle` to install the latest.
+
+## Layered Architecture
 
 ![Layered](docs/api/layered-architecture.jpg)
 
 - Infrastructure layer
   - Client
-    - HTML5 Static SPA generated microfrontend
+    - Preact UI packaged as WebComponents using transcrypt
     - Mobile and Web Offline access using service workers
     - Runs on user devices
-    - Implements application service interfaces with IoC container
-    - Creates api instance from IoC container and calls api services
-    - Calls remote REST flask processes
+    - Calls remote REST stateless processes
     - Contains dependencies on specific infrastructure or packages
   - Front controller ( [process in 12 factor app](https://microthings.netlify.com/concepts/12factor/ch7.xhtml) )
-    - Flask process as a wsgi microservice
-    - NARWAL REST processes with JWT secured auth
+    - Bottle.py stateless processes as wsgi microservices
+    - NARWAL REST with JWT secured auth
     - Runs on servers / serverless
     - Implements application service interfaces with IoC container
     - Creates api instance from IoC container and calls api services
-    - Calls remote REST flask processes
+    - Calls remote REST stateless processes
     - Contains dependencies on specific infrastructure or packages
 - Application layer
   - Emit IO with application service interfaces
@@ -41,7 +75,7 @@ Status: [![Netlify Status](https://api.netlify.com/api/v1/badges/03fcd31b-aad4-4
   - Mostly I/O Services
   - Use Case Backing Services
   - [API](mything/api.py)
-- Domain layel
+- Domain layer
   - All Ubiquitus Language 
   - Accepts only domain model types to domain services
   - Emit IO with repository interfaces
@@ -55,10 +89,10 @@ Status: [![Netlify Status](https://api.netlify.com/api/v1/badges/03fcd31b-aad4-4
   - Contains zero dependencies on specific infrastructure or packages
   - [Model](mything/model.py)
 
-## Requirements
+## Setup Requirements
 
 - Install git `https://git-scm.com/downloads`
-- Install Python 3.6 or greater and python3-venv `https://www.python.org/downloads/`
+- Install Python 3.6 or greater with python3-venv `https://www.python.org/downloads/`
 
 ## Setup on Linux
 
@@ -72,48 +106,26 @@ Status: [![Netlify Status](https://api.netlify.com/api/v1/badges/03fcd31b-aad4-4
 
     choco install python3 git
 
-## Setup development tools (all platforms)
+## Setup development tools (using bash on all platforms)
 
-    git clone https://github.com/sdaves/mything
-    cd mything
+    git clone https://github.com/sdaves/microthings
+    cd microthings
     python3 -m venv venv
-    . venv/bin/activate
-    
-    # with system make
-    make setup 
-    
-    # or
-    
-    # without system make
-    python3 -m pip install py-make
-    python3 -m pymake setup
+    source venv/bin/activate
+    pip install py-make
+    pymake setup # or make setup
 
 ## Build
 
-    # with system make
-    make 
-    
-    # or
-    
-    # without system make
-    python3 -m pymake
+    source venv/bin/activate
+    pymake # or make
 
 ## Test
 
-    # with system make
-    make test
-    
-    # or
-    
-    # without system make
-    python3 -m pymake test
+    source venv/bin/activate
+    pymake test # or make test
 
 ## Help
 
-    # with system make
-    make help
-    
-    # or
-    
-    # without system make
-    python3 -m pymake help
+    source venv/bin/activate
+    pymake help # or make help

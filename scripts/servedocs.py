@@ -6,4 +6,5 @@ import os
 os.chdir(os.path.abspath(os.path.dirname(__file__)))
 os.chdir('..')
 os.chdir('docs')
+os.chdir('api')
 os.system('python3 -m http.server')

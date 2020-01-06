@@ -36,7 +36,12 @@ build: ## Build pypi package
 generatejs: ## Build javascript
 	python3 -m poetry run transcrypt -da -sf -de -m -n -b -ds -dc mything
 	python3 -c "print('moving generated js to docs/api/js/');import shutil;import os;os.chdir('__target__');files = os.listdir(); match = lambda file: file.endswith('.js'); move = lambda file: (os.path.exists('../docs/api/js/'+file) and os.remove('../docs/api/js/'+file)) or shutil.move(file, '../docs/api/js/'); list(map(move,filter(match, files)))"
-
+	
+rebuildcustompreact: ## Download and minify custom preact browserify deps "
+	npm i browserify preact proppy proppy-preact uglify-js
+	./node_modules/.bin/browserify docs/api/custom-preact.browserify.js -o docs/api/custom-preact.js
+	./node_modules/.bin/uglifyjs docs/api/custom-preact.js -o docs/api/custom-preact.min.js
+	
 tdd: ## Run tests on file change
 	python3 -m poetry run ptw
 
