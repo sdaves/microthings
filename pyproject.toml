@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mything"
-version = "0.3.2"
+version = "0.4.0"
 description = "Microfrontends and Microservices with 100% Pure Python and Domain Driven Design . Flask for your processes with SPA HTML5 static js interfaces using generated ES6 modules. https://microthings.netlify.com/"
 authors = ["Stephen Daves <contact@stephendaves.com>"]
 
