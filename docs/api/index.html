@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
-<head><meta http-equiv="content-type" content="text/html; charset=utf-8">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="Description" content="Microservices and Microfrontends with 100% Pure Python and Domain Driven Design. Serverless Bottle.py for your server processes with webcomponents generated using transcrypt and running on preact. https://microthings.netlify.com/">
 <title>microthings</title>
@@ -11,6 +12,8 @@
 <script defer type="module" src="js/mything.microfrontends.hello.js"></script>
 <script defer type="module" src="js/mything.microfrontends.counter.js"></script>
 <link rel="stylesheet" href="js/pure-min.css" integrity="sha384-oAOxQR6DkCoMliIh8yFnu25d7Eq/PHS21PClpwjOTeU2jRSq11vu66rf90/cZr47" crossorigin="anonymous" />
+<link rel="manifest" href="/manifest.json">
+<script>if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('service-worker.js'); }); }</script>
 </head>
 <body>
   <div class="pure-g">
