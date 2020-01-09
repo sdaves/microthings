@@ -15,5 +15,5 @@ class CounterFrontend:
         return self._html.h('div', {}, [
             props['page'], 
             props['counter'], 
-            self._html.h('button', {'onClick': lambda: props['setCounter'](props['counter']+1)}, '+1')
+            self._html.h('button', {'class':'pure-button pure-button-primary','onClick': lambda: props['setCounter'](props['counter']+1)}, '+1')
         ])
