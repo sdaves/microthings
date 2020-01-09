@@ -1,9 +1,9 @@
-from mything.microfrontends.core import IFrontend, define
+from mything.microfrontends.core import IHtml, webcomponent
 
-@define
-class CounterFrontend(IFrontend):    
-    def __init__(self, html):
-        super().__init__(html, 'mything-counter', ['page'], lambda x: self.mount(x))
+@webcomponent('mything-counter', ['page'])
+class CounterFrontend:    
+    def __init__(self, html: IHtml):
+        self._html = html
         
     def config(self):
         return self._html.compose(
