@@ -30,7 +30,6 @@ Transcrypt compiles this to `hello.js` and it can be included as a js module in 
 ```python
 class Hello:
     def __init__(self, app):
-        super().__init__()
         app.route('/hello')(self.hello)
         
     def hello(self):

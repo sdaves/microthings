@@ -1,6 +1,5 @@
 class Hello:
     def __init__(self, app):
-        super().__init__()
         app.route('/hello')(self.hello)
         
     def hello(self):

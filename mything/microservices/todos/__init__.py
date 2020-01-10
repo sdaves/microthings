@@ -2,10 +2,9 @@ import json
 
 class Todos:
     def __init__(self, app, bottle):
-        super().__init__()
-        self._app = app
         self._bottle = bottle
-        self._setup()
+        app.route('/todos')(self.get_list)
+        app.route('/todos/<name>')(self.get_single)
         
     def get_list(self):
         query = self._bottle.request.query
@@ -13,11 +12,6 @@ class Todos:
     
     def get_single(self, name):
         return json.dumps(dict(data=[name]))
-    
-    def _setup(self):
-        route = self._app.route
-        route('/todos')(self.get_list)
-        route('/todos/<name>')(self.get_single)
 
 if __name__ == '__main__':
     import dependencies, bottle
