@@ -19,4 +19,4 @@ class CounterFrontend(IFrontend):
         ])
 
     def view(self, props):
-        return self._html.attach(self.config())(self.root)()
+        return self._html.attach(self.config())(self.root)
