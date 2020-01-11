@@ -29,7 +29,7 @@ class IComponent:
     def mount(self, tag: str, attributes: typing.List, instance: IFrontend):
         pass
     
-class WebComponent(IComponent):
+class PureCssWebComponent(IComponent):
     def mount(self, tag: str, attributes: typing.List, instance: IFrontend):
         def mounter(html, element, mountPoint, style, instance, attributes):
             attrs = dict()
@@ -45,4 +45,8 @@ class WebComponent(IComponent):
             root.appendChild(style)
             root.appendChild(mountPoint)
 
-        # __pragma__ ('js', '{}', 'class cls extends HTMLElement{connectedCallback(){mounter(window.CustomHtml, this, window.document.createElement("span"),window.document.createElement("link"),instance,attributes);}};window.customElements.define(tag, cls, attributes);')
+        def cb(html, me, create):
+            mounter(html, me, create("span"), create("link"), instance, attributes)
+            
+        # __pragma__ ('js', '{}', 'class cls extends HTMLElement{connectedCallback(){cb(window.CustomHtml, this, x => document.createElement(x))}}')
+        # __pragma__ ('js', '{}', 'window.customElements.define(tag, cls, attributes);')
