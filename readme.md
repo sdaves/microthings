@@ -12,12 +12,12 @@ Status: [![Netlify Status](https://api.netlify.com/api/v1/badges/03fcd31b-aad4-4
 ## Simple Microfrontend (Client)
 
 ```python
-from mything.microfrontends.core import IHtml, webcomponent
+from mything.microfrontends.core import IHtml, IComponent, IFrontend
 
-@webcomponent('mything-hello', ['name'])
-class HelloFrontend:    
-    def __init__(self, html: IHtml):
+class HelloFrontend(IFrontend):    
+    def __init__(self, html: IHtml, component: IComponent):
         self._html = html
+        component.mount('mything-hello', ['name'], self)
 
     def render(self, props={'name':'Guest'}):
         return self._html.h('span', {}, 'Hello {0}!'.format(props['name']))
