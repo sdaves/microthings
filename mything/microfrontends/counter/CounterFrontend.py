@@ -11,10 +11,10 @@ class CounterFrontend(IFrontend):
             self._html.withState('counter', 'setCounter', 0)
         )
 
-    def render(self, props={'page':'Home', 'counter':0, 'setCounter':lambda x: None}):
+    def view(self, props={'page':'Home', 'counter':0, 'setCounter':lambda x: None}):
         root = self._html.h('div', {}, [
             props['page'], 
             props['counter'], 
             self._html.h('button', {'class':'pure-button pure-button-primary','onClick': lambda: props['setCounter'](props['counter']+1)}, '+1')
         ])
-        return self.config()([root])
+        return self._html.attach(self.config(), root)

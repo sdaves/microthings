@@ -5,5 +5,5 @@ class HelloFrontend(IFrontend):
         self._html = html
         component.mount('mything-hello', ['name'], self)
 
-    def render(self, props={'name':'Guest'}):
+    def view(self, props={'name':'Guest'}):
         return self._html.h('span', {}, 'Hello {0}!'.format(props['name']))

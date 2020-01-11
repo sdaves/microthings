@@ -3,13 +3,16 @@ import typing
 # __pragma__ ('noskip')
 
 class IFrontend:
-    def render(self, props: dict):
+    def view(self, props: dict):
         pass
 
 class IHtml:
-    def h(*args):
+    def h(self, name: str, props: dict, children: typing.List):
         pass
     
+    def render(self, instance: IFrontend, mountPoint):
+        pass
+
     def compose(*args):
         pass
     
@@ -21,21 +24,18 @@ class IHtml:
     
     def attach(*args):
         pass
-    
-    def render(*args):
-        pass
 
 class IComponent:
-    def mount(self):
+    def mount(self, tag: str, attributes: typing.List, instance: IFrontend):
         pass
     
 class WebComponent(IComponent):
-    def mount(self, tag: str, attributes: [], instance):
+    def mount(self, tag: str, attributes: typing.List, instance: IFrontend):
         def mounter(html, element, mountPoint, style, instance, attributes):
             attrs = dict()
             for item in attributes:
                 attrs[item] = element.getAttribute(item)
-            custom = instance.render(attrs)
+            custom = instance.view(attrs)
             provider = html.h(html.ProppyProvider, {}, [custom])
             html.render(provider, mountPoint)    
             root = element.attachShadow({ 'mode': 'open' })
