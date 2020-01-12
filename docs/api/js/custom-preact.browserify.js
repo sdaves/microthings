@@ -1,7 +1,7 @@
 window.CustomHtml = window.CustomHtml || {};
 
 var preact = require('preact');
-for (var i in preact) { window.CustomHtml[i] = preact[i] } }
+for (var i in preact) { window.CustomHtml[i] = preact[i] }
 
 var proppy = require('proppy');
 for (var i in proppy) { window.CustomHtml[i] = proppy[i] }
