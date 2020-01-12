@@ -45,10 +45,9 @@ class PureCssWebComponent(IComponent):
             root.appendChild(style)
             root.appendChild(mountPoint)
             
-        getProvider = lambda: None
-        # __pragma__ ('js', '{}', 'class Provider extends html.Component {public getChildContext() {const { children, ...context } = this.props;return context;} public render({ children }) {return (children && children[0]) || null;}};getProvider=()=>Provider;')
-
         def cb(html, me, create):
+            getProvider = lambda: html.Component
+            # __pragma__ ('js', '{}', 'class Provider extends html.Component {public getChildContext() {const { children, ...context } = this.props;return context;} public render({ children }) {return (children && children[0]) || null;}};getProvider=()=>Provider;')
             mounter(html, me, create("span"), create("link"), instance, attributes, getProvider())
             
         # __pragma__ ('js', '{}', 'class cls extends HTMLElement{connectedCallback(){cb(window.CustomHtml, this, x => document.createElement(x))}}')
