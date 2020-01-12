@@ -35,7 +35,7 @@ class PureCssWebComponent(IComponent):
             attrs = dict()
             for item in attributes:
                 attrs[item] = element.getAttribute(item)
-            provider = html.h(Provider, null, [instance.view(attrs)])
+            provider = html.h(Provider, None, [instance.view(attrs)])
             html.render(provider, mountPoint)    
             root = element.attachShadow({ 'mode': 'open' })
             style.setAttribute('rel','stylesheet')
@@ -44,8 +44,9 @@ class PureCssWebComponent(IComponent):
             root.appendChild(style)
             root.appendChild(mountPoint)
             
-        def cb(html, me, create):
+        def connect(html, me, create):
             mounter(html, me, create("span"), create("link"), instance, attributes, html.ProppyProvider)
             
-        # __pragma__ ('js', '{}', 'class cls extends HTMLElement{connectedCallback(){cb(window.CustomHtml, this, x => document.createElement(x))}}')
+        # call customElements.define with class that calls connect
+        # __pragma__ ('js', '{}', 'class cls extends HTMLElement{connectedCallback(){connect(window.CustomHtml, this, x => document.createElement(x))}}')
         # __pragma__ ('js', '{}', 'window.customElements.define(tag, cls, attributes);')
