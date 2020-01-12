@@ -7,4 +7,4 @@ var proppy = require('proppy');
 for (var i in proppy) { window.CustomHtml[i] = proppy[i] }
 
 var proppyPreact = require('proppy-preact');
-for (var i in proppyPreact) { window.CustomHtml[i] = function() { return proppyPreact[i].apply(proppyPreact, arguments) } }
+for (var i in proppyPreact) { window.CustomHtml[i] = proppyPreact[i] }
