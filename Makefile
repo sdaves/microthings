@@ -34,6 +34,7 @@ build: ## Build pypi package
 	python3 -m poetry build
 
 generatejs: ## Build javascript
+	python3 -m pymake rebuildcustompreact
 	python3 -m poetry run transcrypt -da -sf -de -m -n -b -ds -dc mything
 	python3 -c "print('moving generated js to docs/api/js/');import shutil;import os;os.chdir('__target__');files = os.listdir(); match = lambda file: file.endswith('.js'); move = lambda file: (os.path.exists('../docs/api/js/'+file) and os.remove('../docs/api/js/'+file)) or shutil.move(file, '../docs/api/js/'); list(map(move,filter(match, files)))"
 	
