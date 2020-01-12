@@ -40,8 +40,8 @@ generatejs: ## Build javascript
 	
 rebuildcustompreact: ## Download and minify custom preact browserify deps "
 	npm i browserify preact proppy proppy-preact uglify-js
-	./node_modules/.bin/browserify docs/api/custom-preact.browserify.js -o docs/api/custom-preact.js
-	./node_modules/.bin/uglifyjs docs/api/custom-preact.js -o docs/api/custom-preact.min.js
+	./node_modules/.bin/browserify docs/api/js/custom-preact.browserify.js -o docs/api/js/custom-preact.js
+	./node_modules/.bin/uglifyjs docs/api/js/custom-preact.js -o docs/api/js/custom-preact.min.js
 	
 tdd: ## Run tests on file change
 	python3 -m poetry run ptw
