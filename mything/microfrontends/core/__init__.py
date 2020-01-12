@@ -35,7 +35,7 @@ class PureCssWebComponent(IComponent):
             attrs = dict()
             for item in attributes:
                 attrs[item] = element.getAttribute(item)
-            provider = html.h(Provider, {'providers':{'attrs':attrs}}, [instance.view()])
+            provider = html.h(Provider, {'providers':{'attrs':attrs}}, [instance.view(attrs)])
             html.render(provider, mountPoint)    
             root = element.attachShadow({ 'mode': 'open' })
             style.setAttribute('rel','stylesheet')
