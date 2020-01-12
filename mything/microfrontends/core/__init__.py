@@ -31,12 +31,12 @@ class IComponent:
     
 class PureCssWebComponent(IComponent):
     def mount(self, tag: str, attributes: typing.List, instance: IFrontend):
-        def mounter(html, element, mountPoint, style, instance, attributes):
+        def mounter(html, element, mountPoint, style, instance, attributes, Provider):
             attrs = dict()
             for item in attributes:
                 attrs[item] = element.getAttribute(item)
             custom = instance.view(attrs)
-            provider = html.h(html.ProppyProvider, {}, [custom])
+            provider = html.h(Provider, {}, [custom])
             html.render(provider, mountPoint)    
             root = element.attachShadow({ 'mode': 'open' })
             style.setAttribute('rel','stylesheet')
@@ -44,9 +44,12 @@ class PureCssWebComponent(IComponent):
             style.setAttribute('type','text/css')
             root.appendChild(style)
             root.appendChild(mountPoint)
+            
+        getProvider = lambda: None
+        # __pragma__ ('js', '{}', 'class Provider extends html.Component {public getChildContext() {const { children, ...context } = this.props;return context;} public render({ children }) {return (children && children[0]) || null;}};getProvider=()=>Provider;')
 
         def cb(html, me, create):
-            mounter(html, me, create("span"), create("link"), instance, attributes)
+            mounter(html, me, create("span"), create("link"), instance, attributes, getProvider())
             
         # __pragma__ ('js', '{}', 'class cls extends HTMLElement{connectedCallback(){cb(window.CustomHtml, this, x => document.createElement(x))}}')
         # __pragma__ ('js', '{}', 'window.customElements.define(tag, cls, attributes);')
